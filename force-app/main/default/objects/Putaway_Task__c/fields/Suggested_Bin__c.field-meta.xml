@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Suggested_Bin__c</fullName>
+    <deleteConstraint>SetNull</deleteConstraint>
+    <label>Suggested Bin</label>
+    <referenceTo>Bin_Location__c</referenceTo>
+    <relationshipLabel>Suggested Putaway Tasks</relationshipLabel>
+    <relationshipName>Suggested_Putaway_Tasks</relationshipName>
+    <type>Lookup</type>
+</CustomField>

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Receiving_Task__c</fullName>
+    <deleteConstraint>SetNull</deleteConstraint>
+    <label>Receiving Task</label>
+    <referenceTo>Receiving_Task__c</referenceTo>
+    <relationshipLabel>Putaway Tasks</relationshipLabel>
+    <relationshipName>Putaway_Tasks</relationshipName>
+    <type>Lookup</type>
+</CustomField>

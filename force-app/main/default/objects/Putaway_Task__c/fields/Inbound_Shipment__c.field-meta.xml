@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Inbound_Shipment__c</fullName>
+    <deleteConstraint>SetNull</deleteConstraint>
+    <label>Inbound Shipment</label>
+    <referenceTo>Inbound_Shipment__c</referenceTo>
+    <relationshipLabel>Putaway Tasks</relationshipLabel>
+    <relationshipName>Putaway_Tasks</relationshipName>
+    <type>Lookup</type>
+</CustomField>
