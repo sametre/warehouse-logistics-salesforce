@@ -56,22 +56,30 @@ public with sharing class WarehouseOutboundService {
             WHERE Product__c IN :productIds
               AND Bin_Location__r.Warehouse__c = :orderRecord.Warehouse__c
               AND Status__c != 'Hold'
+              AND Bin_Location__r.Bin_Type__c IN ('Picking', 'Storage')
             WITH USER_MODE
-            ORDER BY Bin_Location__r.Bin_Type__c, CreatedDate
+            ORDER BY CreatedDate
             FOR UPDATE
         ];
 
         Map<Id, List<Inventory__c>> inventoryByProduct = new Map<Id, List<Inventory__c>>();
-        for (Inventory__c inventory : inventoryRecords) {
-            Decimal onHand = inventory.On_Hand__c == null ? 0 : inventory.On_Hand__c;
-            Decimal reserved = inventory.Reserved__c == null ? 0 : inventory.Reserved__c;
-            if (onHand - reserved <= 0) {
-                continue;
+        // Prefer forward-pick bins before reserve storage so the allocation mirrors a normal warehouse route.
+        for (Integer pass = 0; pass < 2; pass++) {
+            for (Inventory__c inventory : inventoryRecords) {
+                Boolean isPickingBin = inventory.Bin_Location__r.Bin_Type__c == 'Picking';
+                if ((pass == 0 && !isPickingBin) || (pass == 1 && isPickingBin)) {
+                    continue;
+                }
+                Decimal onHand = inventory.On_Hand__c == null ? 0 : inventory.On_Hand__c;
+                Decimal reserved = inventory.Reserved__c == null ? 0 : inventory.Reserved__c;
+                if (onHand - reserved <= 0) {
+                    continue;
+                }
+                if (!inventoryByProduct.containsKey(inventory.Product__c)) {
+                    inventoryByProduct.put(inventory.Product__c, new List<Inventory__c>());
+                }
+                inventoryByProduct.get(inventory.Product__c).add(inventory);
             }
-            if (!inventoryByProduct.containsKey(inventory.Product__c)) {
-                inventoryByProduct.put(inventory.Product__c, new List<Inventory__c>());
-            }
-            inventoryByProduct.get(inventory.Product__c).add(inventory);
         }
 
         List<Pick_Task__c> pickTasks = new List<Pick_Task__c>();

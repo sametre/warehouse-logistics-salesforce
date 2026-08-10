@@ -215,12 +215,14 @@ public with sharing class WarehouseOutboundController {
 
     @AuraEnabled
     public static Id packOrder(Id orderId, Decimal weight, String notes) {
-        return WarehouseShippingService.packOrder(orderId, weight, notes).Id;
+        Package__c packageRecord = WarehouseShippingService.packOrder(orderId, weight, notes);
+        return packageRecord.Id;
     }
 
     @AuraEnabled
     public static Id shipPackage(Id packageId, String carrier, String trackingNumber, String notes) {
-        return WarehouseShippingService.shipPackage(packageId, carrier, trackingNumber, notes).Id;
+        Shipment__c shipment = WarehouseShippingService.shipPackage(packageId, carrier, trackingNumber, notes);
+        return shipment.Id;
     }
 
     private static List<OrderRow> mapOrders(List<Outbound_Order__c> orders) {
