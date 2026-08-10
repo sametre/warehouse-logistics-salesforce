@@ -149,15 +149,15 @@ export default class WarehouseReceivingWorkspace extends LightningElement {
     }
 
     handleReceivedQuantityChange(event) {
-        this.receivedQuantity = Number(event.detail.value);
+        this.receivedQuantity = Number(event.target.value);
     }
 
     handleDamagedQuantityChange(event) {
-        this.damagedQuantity = Number(event.detail.value || 0);
+        this.damagedQuantity = Number(event.target.value || 0);
     }
 
     handleReceivingNotesChange(event) {
-        this.receivingNotes = event.detail.value;
+        this.receivingNotes = event.target.value;
     }
 
     handleDestinationBinChange(event) {
@@ -165,7 +165,7 @@ export default class WarehouseReceivingWorkspace extends LightningElement {
     }
 
     handlePutawayNotesChange(event) {
-        this.putawayNotes = event.detail.value;
+        this.putawayNotes = event.target.value;
     }
 
     async submitReceipt() {
