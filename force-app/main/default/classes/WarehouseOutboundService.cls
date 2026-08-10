@@ -95,7 +95,7 @@ public with sharing class WarehouseOutboundService {
                     continue;
                 }
 
-                Decimal allocated = Math.min(available, requiredQuantity);
+                Decimal allocated = available < requiredQuantity ? available : requiredQuantity;
                 inventory.Reserved__c = reserved + allocated;
                 inventory.Status__c = WarehouseInventoryService.calculateStatus(
                     inventory.On_Hand__c,
