@@ -1,0 +1,21 @@
+.summary-grid {
+    row-gap: 0.75rem;
+}
+
+.metric {
+    border: 1px solid var(--lwc-colorBorder, #dddbda);
+    border-radius: 0.25rem;
+    padding: 0.75rem;
+    min-height: 4.5rem;
+}
+
+.metric-label {
+    display: block;
+    font-size: 0.75rem;
+    margin-bottom: 0.25rem;
+    color: var(--lwc-colorTextWeak, #706e6b);
+}
+
+.metric strong {
+    font-size: 1.25rem;
+}

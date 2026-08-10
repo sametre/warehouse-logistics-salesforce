@@ -1,0 +1,57 @@
+<template>
+    <lightning-card title="Warehouse Inventory" icon-name="standard:product_item">
+        <div class="slds-p-horizontal_medium slds-p-bottom_small">
+            <div class="slds-grid slds-wrap slds-gutters_small summary-grid">
+                <div class="slds-col slds-size_1-of-2 slds-large-size_1-of-5">
+                    <div class="metric">
+                        <span class="metric-label">Records</span>
+                        <strong>{recordCount}</strong>
+                    </div>
+                </div>
+                <div class="slds-col slds-size_1-of-2 slds-large-size_1-of-5">
+                    <div class="metric">
+                        <span class="metric-label">On Hand</span>
+                        <strong>{onHand}</strong>
+                    </div>
+                </div>
+                <div class="slds-col slds-size_1-of-2 slds-large-size_1-of-5">
+                    <div class="metric">
+                        <span class="metric-label">Reserved</span>
+                        <strong>{reserved}</strong>
+                    </div>
+                </div>
+                <div class="slds-col slds-size_1-of-2 slds-large-size_1-of-5">
+                    <div class="metric">
+                        <span class="metric-label">Available</span>
+                        <strong>{available}</strong>
+                    </div>
+                </div>
+                <div class="slds-col slds-size_1-of-2 slds-large-size_1-of-5">
+                    <div class="metric">
+                        <span class="metric-label">Needs Attention</span>
+                        <strong>{lowStockCount}</strong>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <template lwc:if={isLoading}>
+            <lightning-spinner alternative-text="Loading inventory" size="small"></lightning-spinner>
+        </template>
+
+        <template lwc:elseif={hasRows}>
+            <lightning-datatable
+                key-field="id"
+                data={rows}
+                columns={columns}
+                hide-checkbox-column>
+            </lightning-datatable>
+        </template>
+
+        <template lwc:else>
+            <div class="slds-p-around_large slds-text-align_center slds-text-color_weak">
+                No inventory records are available yet.
+            </div>
+        </template>
+    </lightning-card>
+</template>
