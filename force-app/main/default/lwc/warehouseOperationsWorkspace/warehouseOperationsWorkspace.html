@@ -4,13 +4,16 @@
             <div>
                 <span class="workspace-eyebrow">WAREHOUSE &amp; LOGISTICS</span>
                 <h1>Operations Workspace</h1>
-                <p>Receive inbound stock, complete putaway, and monitor live inventory from one workspace.</p>
+                <p>Receive inbound stock, fulfill outbound orders, and monitor live inventory from one workspace.</p>
             </div>
         </header>
 
         <lightning-tabset variant="scoped">
             <lightning-tab label="Inbound Operations">
                 <c-warehouse-receiving-workspace warehouse-id={warehouseId}></c-warehouse-receiving-workspace>
+            </lightning-tab>
+            <lightning-tab label="Outbound Fulfillment">
+                <c-warehouse-outbound-workspace warehouse-id={warehouseId}></c-warehouse-outbound-workspace>
             </lightning-tab>
             <lightning-tab label="Inventory Control">
                 <c-warehouse-inventory-workspace warehouse-id={warehouseId}></c-warehouse-inventory-workspace>
