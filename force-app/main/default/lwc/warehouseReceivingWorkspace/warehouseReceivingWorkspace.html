@@ -1,0 +1,153 @@
+<template>
+    <lightning-card title="Inbound Operations" icon-name="standard:shipment">
+        <lightning-button
+            slot="actions"
+            label="Refresh"
+            icon-name="utility:refresh"
+            onclick={handleRefresh}>
+        </lightning-button>
+
+        <template lwc:if={isSaving}>
+            <lightning-spinner alternative-text="Saving warehouse operation" size="small"></lightning-spinner>
+        </template>
+
+        <lightning-tabset>
+            <lightning-tab label="Receiving" value="receiving">
+                <div class="slds-p-horizontal_small slds-p-bottom_medium">
+                    <template lwc:if={hasReceivingRows}>
+                        <lightning-datatable
+                            key-field="lineId"
+                            data={receivingRows}
+                            columns={receivingColumns}
+                            onrowaction={handleReceivingAction}
+                            hide-checkbox-column>
+                        </lightning-datatable>
+                    </template>
+                    <template lwc:else>
+                        <div class="empty-state">No inbound lines are waiting to be received.</div>
+                    </template>
+
+                    <template lwc:if={selectedReceivingLine}>
+                        <section class="operation-panel slds-m-top_medium">
+                            <div class="panel-heading">
+                                <div>
+                                    <span class="eyebrow">RECEIVE</span>
+                                    <h3>{selectedReceivingLine.shipmentNumber} · {selectedReceivingLine.productName}</h3>
+                                </div>
+                                <span class="quantity-pill">{selectedReceivingLine.remainingQuantity} remaining</span>
+                            </div>
+
+                            <div class="slds-grid slds-wrap slds-gutters">
+                                <div class="slds-col slds-size_1-of-1 slds-large-size_1-of-3">
+                                    <lightning-combobox
+                                        label="Receiving / staging bin"
+                                        value={receivingBinId}
+                                        options={receivingBinOptions}
+                                        onchange={handleReceivingBinChange}
+                                        required>
+                                    </lightning-combobox>
+                                </div>
+                                <div class="slds-col slds-size_1-of-2 slds-large-size_1-of-6">
+                                    <lightning-input
+                                        type="number"
+                                        label="Received"
+                                        min="0.01"
+                                        step="0.01"
+                                        max={selectedReceivingLine.remainingQuantity}
+                                        value={receivedQuantity}
+                                        onchange={handleReceivedQuantityChange}
+                                        required>
+                                    </lightning-input>
+                                </div>
+                                <div class="slds-col slds-size_1-of-2 slds-large-size_1-of-6">
+                                    <lightning-input
+                                        type="number"
+                                        label="Damaged"
+                                        min="0"
+                                        step="0.01"
+                                        value={damagedQuantity}
+                                        onchange={handleDamagedQuantityChange}>
+                                    </lightning-input>
+                                </div>
+                                <div class="slds-col slds-size_1-of-1 slds-large-size_1-of-3">
+                                    <lightning-input
+                                        label="Receiving note"
+                                        value={receivingNotes}
+                                        onchange={handleReceivingNotesChange}>
+                                    </lightning-input>
+                                </div>
+                            </div>
+                            <div class="slds-m-top_medium slds-text-align_right">
+                                <lightning-button
+                                    variant="brand"
+                                    label="Complete Receipt"
+                                    onclick={submitReceipt}
+                                    disabled={isSaving}>
+                                </lightning-button>
+                            </div>
+                        </section>
+                    </template>
+                </div>
+            </lightning-tab>
+
+            <lightning-tab label="Putaway" value="putaway">
+                <div class="slds-p-horizontal_small slds-p-bottom_medium">
+                    <template lwc:if={hasPutawayRows}>
+                        <lightning-datatable
+                            key-field="taskId"
+                            data={putawayRows}
+                            columns={putawayColumns}
+                            onrowaction={handlePutawayAction}
+                            hide-checkbox-column>
+                        </lightning-datatable>
+                    </template>
+                    <template lwc:else>
+                        <div class="empty-state">No putaway tasks are waiting.</div>
+                    </template>
+
+                    <template lwc:if={selectedPutawayTask}>
+                        <section class="operation-panel slds-m-top_medium">
+                            <div class="panel-heading">
+                                <div>
+                                    <span class="eyebrow">PUTAWAY</span>
+                                    <h3>{selectedPutawayTask.taskNumber} · {selectedPutawayTask.productName}</h3>
+                                </div>
+                                <span class="quantity-pill">{selectedPutawayTask.quantity} units</span>
+                            </div>
+
+                            <div class="slds-grid slds-wrap slds-gutters">
+                                <div class="slds-col slds-size_1-of-1 slds-large-size_1-of-2">
+                                    <lightning-combobox
+                                        label="Destination bin"
+                                        value={destinationBinId}
+                                        options={destinationBinOptions}
+                                        onchange={handleDestinationBinChange}
+                                        required>
+                                    </lightning-combobox>
+                                </div>
+                                <div class="slds-col slds-size_1-of-1 slds-large-size_1-of-2">
+                                    <lightning-input
+                                        label="Putaway note"
+                                        value={putawayNotes}
+                                        onchange={handlePutawayNotesChange}>
+                                    </lightning-input>
+                                </div>
+                            </div>
+                            <p class="hint slds-m-top_x-small">
+                                Source: {selectedPutawayTask.sourceBin} · Suggested: {selectedPutawayTask.suggestedBin}
+                            </p>
+                            <div class="slds-m-top_medium slds-text-align_right">
+                                <lightning-button
+                                    variant="brand"
+                                    label="Complete Putaway"
+                                    onclick={submitPutaway}
+                                    disabled={isSaving}>
+                                </lightning-button>
+                            </div>
+                        </section>
+                    </template>
+                </div>
+            </lightning-tab>
+        </lightning-tabset>
+    </lightning-card>
+</template>
