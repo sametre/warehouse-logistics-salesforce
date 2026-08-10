@@ -1,0 +1,46 @@
+.operation-panel {
+    border: 1px solid var(--lwc-colorBorder, #dddbda);
+    border-radius: 0.5rem;
+    padding: 1rem;
+    background: var(--lwc-colorBackgroundAlt, #ffffff);
+}
+
+.panel-heading {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 1rem;
+    margin-bottom: 0.75rem;
+}
+
+.panel-heading h3 {
+    font-size: 1rem;
+    font-weight: 700;
+}
+
+.eyebrow {
+    display: block;
+    margin-bottom: 0.125rem;
+    font-size: 0.68rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    color: var(--lwc-colorTextWeak, #706e6b);
+}
+
+.quantity-pill {
+    padding: 0.25rem 0.55rem;
+    border-radius: 999px;
+    background: var(--lwc-colorBackground, #f3f3f3);
+    white-space: nowrap;
+    font-weight: 600;
+}
+
+.empty-state {
+    padding: 2rem 1rem;
+    text-align: center;
+    color: var(--lwc-colorTextWeak, #706e6b);
+}
+
+.hint {
+    color: var(--lwc-colorTextWeak, #706e6b);
+}

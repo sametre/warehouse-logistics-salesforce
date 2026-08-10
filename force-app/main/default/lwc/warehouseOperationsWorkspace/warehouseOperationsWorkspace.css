@@ -1,0 +1,24 @@
+.workspace-shell {
+    padding: 0.25rem;
+}
+
+.workspace-header {
+    padding: 0.25rem 0.25rem 0.5rem;
+}
+
+.workspace-header h1 {
+    margin: 0.1rem 0 0.25rem;
+    font-size: 1.5rem;
+    font-weight: 700;
+}
+
+.workspace-header p {
+    color: var(--lwc-colorTextWeak, #706e6b);
+}
+
+.workspace-eyebrow {
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.09em;
+    color: var(--lwc-colorTextWeak, #706e6b);
+}

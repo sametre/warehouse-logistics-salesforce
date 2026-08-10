@@ -4,6 +4,10 @@
         <members>WarehouseInventoryController</members>
         <members>WarehouseInventoryService</members>
         <members>WarehouseInventoryServiceTest</members>
+        <members>WarehouseOperationsController</members>
+        <members>WarehouseReceivingService</members>
+        <members>WarehousePutawayService</members>
+        <members>WarehouseReceivingPutawayTest</members>
         <name>ApexClass</name>
     </types>
     <types>
@@ -17,6 +21,8 @@
         <members>Inventory_Transaction__c</members>
         <members>Inbound_Shipment__c</members>
         <members>Inbound_Shipment_Line__c</members>
+        <members>Receiving_Task__c</members>
+        <members>Putaway_Task__c</members>
         <name>CustomObject</name>
     </types>
     <types>
@@ -29,10 +35,14 @@
         <members>Inventory__c</members>
         <members>Inventory_Transaction__c</members>
         <members>Inbound_Shipment__c</members>
+        <members>Receiving_Task__c</members>
+        <members>Putaway_Task__c</members>
         <name>CustomTab</name>
     </types>
     <types>
         <members>warehouseInventoryWorkspace</members>
+        <members>warehouseReceivingWorkspace</members>
+        <members>warehouseOperationsWorkspace</members>
         <name>LightningComponentBundle</name>
     </types>
     <version>67.0</version>

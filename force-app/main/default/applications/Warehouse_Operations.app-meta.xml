@@ -4,17 +4,19 @@
         <headerColor>#16325C</headerColor>
         <shouldOverrideOrgTheme>false</shouldOverrideOrgTheme>
     </brand>
-    <description>Receiving and inventory operations workspace for the Warehouse Management &amp; Logistics project.</description>
+    <description>Warehouse receiving, putaway, inventory control, and logistics operations.</description>
     <formFactors>Large</formFactors>
     <isNavAutoTempTabsDisabled>false</isNavAutoTempTabsDisabled>
     <isNavPersonalizationDisabled>false</isNavPersonalizationDisabled>
     <label>Warehouse Operations</label>
     <navType>Standard</navType>
     <tabs>standard-home</tabs>
-    <tabs>Warehouse__c</tabs>
-    <tabs>Bin_Location__c</tabs>
+    <tabs>Inbound_Shipment__c</tabs>
+    <tabs>Receiving_Task__c</tabs>
+    <tabs>Putaway_Task__c</tabs>
     <tabs>Inventory__c</tabs>
     <tabs>Inventory_Transaction__c</tabs>
-    <tabs>Inbound_Shipment__c</tabs>
+    <tabs>Warehouse__c</tabs>
+    <tabs>Bin_Location__c</tabs>
     <uiType>Lightning</uiType>
 </CustomApplication>
