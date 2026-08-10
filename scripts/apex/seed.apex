@@ -60,3 +60,60 @@ System.debug('Warehouse: ' + warehouse.Id);
 System.debug('Receiving bin: ' + receivingBin.Id);
 System.debug('Storage bin: ' + storageBin.Id);
 System.debug('Inbound shipment: ' + shipment.Id);
+
+// Outbound fulfillment demo data
+Bin_Location__c pickingBin = new Bin_Location__c(
+    Name = 'Picking P-01-01',
+    Warehouse__c = warehouse.Id,
+    Bin_Code__c = 'BUR-P-01-01',
+    Bin_Type__c = 'Picking',
+    Zone__c = 'PICK',
+    Capacity__c = 250,
+    Is_Active__c = true
+);
+Bin_Location__c shippingBin = new Bin_Location__c(
+    Name = 'Shipping Dock 01',
+    Warehouse__c = warehouse.Id,
+    Bin_Code__c = 'BUR-SHP-01',
+    Bin_Type__c = 'Shipping',
+    Zone__c = 'DOCK',
+    Capacity__c = 500,
+    Is_Active__c = true
+);
+insert new List<Bin_Location__c>{ pickingBin, shippingBin };
+
+insert new Inventory__c(
+    Product__c = product.Id,
+    Bin_Location__c = pickingBin.Id,
+    On_Hand__c = 60,
+    Reserved__c = 0,
+    Reorder_Level__c = 10,
+    Status__c = 'Available'
+);
+
+Account customer = new Account(Name = 'Demo Retail Customer');
+insert customer;
+
+Outbound_Order__c outboundOrder = new Outbound_Order__c(
+    Warehouse__c = warehouse.Id,
+    Customer__c = customer.Id,
+    Status__c = 'Ready to Allocate',
+    Priority__c = 'High',
+    Order_Date__c = Date.today(),
+    Required_Ship_Date__c = Date.today().addDays(1),
+    External_Order_Reference__c = 'WEB-DEMO-001'
+);
+insert outboundOrder;
+
+insert new Outbound_Order_Line__c(
+    Outbound_Order__c = outboundOrder.Id,
+    Product__c = product.Id,
+    Ordered_Quantity__c = 12,
+    Allocated_Quantity__c = 0,
+    Picked_Quantity__c = 0,
+    Packed_Quantity__c = 0,
+    Status__c = 'Pending'
+);
+
+System.debug('Outbound order: ' + outboundOrder.Id);
+System.debug('Picking bin: ' + pickingBin.Id);

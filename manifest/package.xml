@@ -8,6 +8,11 @@
         <members>WarehouseReceivingService</members>
         <members>WarehousePutawayService</members>
         <members>WarehouseReceivingPutawayTest</members>
+        <members>WarehouseOutboundController</members>
+        <members>WarehouseOutboundService</members>
+        <members>WarehousePickingService</members>
+        <members>WarehouseShippingService</members>
+        <members>WarehouseOutboundFlowTest</members>
         <name>ApexClass</name>
     </types>
     <types>
@@ -23,6 +28,11 @@
         <members>Inbound_Shipment_Line__c</members>
         <members>Receiving_Task__c</members>
         <members>Putaway_Task__c</members>
+        <members>Outbound_Order__c</members>
+        <members>Outbound_Order_Line__c</members>
+        <members>Pick_Task__c</members>
+        <members>Package__c</members>
+        <members>Shipment__c</members>
         <name>CustomObject</name>
     </types>
     <types>
@@ -43,6 +53,7 @@
         <members>warehouseInventoryWorkspace</members>
         <members>warehouseReceivingWorkspace</members>
         <members>warehouseOperationsWorkspace</members>
+        <members>warehouseOutboundWorkspace</members>
         <name>LightningComponentBundle</name>
     </types>
     <version>67.0</version>

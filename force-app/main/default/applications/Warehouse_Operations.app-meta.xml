@@ -4,7 +4,7 @@
         <headerColor>#16325C</headerColor>
         <shouldOverrideOrgTheme>false</shouldOverrideOrgTheme>
     </brand>
-    <description>Warehouse receiving, putaway, inventory control, and logistics operations.</description>
+    <description>Warehouse receiving, putaway, outbound fulfillment, inventory control, and logistics operations.</description>
     <formFactors>Large</formFactors>
     <isNavAutoTempTabsDisabled>false</isNavAutoTempTabsDisabled>
     <isNavPersonalizationDisabled>false</isNavPersonalizationDisabled>
@@ -14,6 +14,10 @@
     <tabs>Inbound_Shipment__c</tabs>
     <tabs>Receiving_Task__c</tabs>
     <tabs>Putaway_Task__c</tabs>
+    <tabs>Outbound_Order__c</tabs>
+    <tabs>Pick_Task__c</tabs>
+    <tabs>Package__c</tabs>
+    <tabs>Shipment__c</tabs>
     <tabs>Inventory__c</tabs>
     <tabs>Inventory_Transaction__c</tabs>
     <tabs>Warehouse__c</tabs>

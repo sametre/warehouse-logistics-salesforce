@@ -26,3 +26,7 @@ sf apex run --file scripts/apex/seed.apex --target-org warehouse-dev
 After deployment, add **Warehouse Operations Workspace** to a Lightning App Page in App Builder. The optional `warehouseId` property can filter the workspace to one warehouse.
 
 API version: 67.0.
+
+## Outbound fulfillment
+
+The current build also covers order allocation, inventory reservation, pick tasks, packing, package creation, and shipment release. Physical inventory is reduced only when a pick is recorded; allocation uses the reserved quantity so available stock stays accurate.
