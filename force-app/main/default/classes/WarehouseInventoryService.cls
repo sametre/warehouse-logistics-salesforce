@@ -78,7 +78,7 @@ public with sharing class WarehouseInventoryService {
 
         applyQuantityChange(sourceInventory, -quantity);
         applyQuantityChange(destinationInventory, quantity);
-        Database.update(new List<Inventory__c>{ sourceInventory, destinationInventory }, AccessLevel.USER_MODE);
+        Database.update(new List<Inventory__c>{ sourceInventory, destinationInventory }, true, AccessLevel.USER_MODE);
 
         createTransaction(sourceInventory.Id, 'Transfer Out', -quantity, reference, notes);
         createTransaction(destinationInventory.Id, 'Transfer In', quantity, reference, notes);

@@ -33,6 +33,11 @@
                     <label>Closed</label>
                 </value>
                 <value>
+                    <fullName>Exception</fullName>
+                    <default>false</default>
+                    <label>Exception</label>
+                </value>
+                <value>
                     <fullName>Cancelled</fullName>
                     <default>false</default>
                     <label>Cancelled</label>

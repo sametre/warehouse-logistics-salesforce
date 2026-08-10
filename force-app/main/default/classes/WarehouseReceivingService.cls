@@ -167,7 +167,14 @@ public with sharing class WarehouseReceivingService {
             }
         }
 
-        String newStatus = allReceived ? 'Received' : 'Receiving';
+        Integer exceptionCount = [
+            SELECT COUNT()
+            FROM Receiving_Task__c
+            WHERE Inbound_Shipment__c = :shipmentId AND Status__c = 'Exception'
+            WITH USER_MODE
+        ];
+
+        String newStatus = exceptionCount > 0 ? 'Exception' : (allReceived ? 'Received' : 'Receiving');
         Inbound_Shipment__c shipment = new Inbound_Shipment__c(Id = shipmentId, Status__c = newStatus);
         Database.update(shipment, AccessLevel.USER_MODE);
         return newStatus;

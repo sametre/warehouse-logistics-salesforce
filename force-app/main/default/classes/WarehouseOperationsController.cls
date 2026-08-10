@@ -43,7 +43,7 @@ public with sharing class WarehouseOperationsController {
                        Inbound_Shipment__r.Expected_Date__c, Inbound_Shipment__r.Supplier__r.Name,
                        Inbound_Shipment__r.Warehouse__c, Inbound_Shipment__r.Warehouse__r.Name
                 FROM Inbound_Shipment_Line__c
-                WHERE Inbound_Shipment__r.Status__c IN ('Expected', 'Receiving')
+                WHERE Inbound_Shipment__r.Status__c IN ('Expected', 'Receiving', 'Exception')
                 WITH USER_MODE
                 ORDER BY Inbound_Shipment__r.Expected_Date__c, CreatedDate
                 LIMIT 200
@@ -56,7 +56,7 @@ public with sharing class WarehouseOperationsController {
                        Inbound_Shipment__r.Warehouse__c, Inbound_Shipment__r.Warehouse__r.Name
                 FROM Inbound_Shipment_Line__c
                 WHERE Inbound_Shipment__r.Warehouse__c = :warehouseId
-                  AND Inbound_Shipment__r.Status__c IN ('Expected', 'Receiving')
+                  AND Inbound_Shipment__r.Status__c IN ('Expected', 'Receiving', 'Exception')
                 WITH USER_MODE
                 ORDER BY Inbound_Shipment__r.Expected_Date__c, CreatedDate
                 LIMIT 200

@@ -66,9 +66,20 @@ public with sharing class WarehousePutawayService {
             WITH USER_MODE
         ];
 
+        Integer receivingExceptionCount = [
+            SELECT COUNT()
+            FROM Receiving_Task__c
+            WHERE Inbound_Shipment__c = :shipmentId AND Status__c = 'Exception'
+            WITH USER_MODE
+        ];
+
+        String shipmentStatus = receivingExceptionCount > 0
+            ? 'Exception'
+            : (openTaskCount == 0 ? 'Closed' : 'Putaway');
+
         Inbound_Shipment__c shipment = new Inbound_Shipment__c(
             Id = shipmentId,
-            Status__c = openTaskCount == 0 ? 'Closed' : 'Putaway'
+            Status__c = shipmentStatus
         );
         Database.update(shipment, AccessLevel.USER_MODE);
     }

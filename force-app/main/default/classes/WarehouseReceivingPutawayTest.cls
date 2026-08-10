@@ -58,7 +58,7 @@ private class WarehouseReceivingPutawayTest {
         System.assertEquals(2, result.damagedQuantity);
         System.assertNotEquals(null, result.receivingTaskId);
         System.assertNotEquals(null, result.putawayTaskId);
-        System.assertEquals('Received', result.shipmentStatus);
+        System.assertEquals('Exception', result.shipmentStatus);
 
         Inventory__c stagedInventory = [
             SELECT On_Hand__c, Bin_Location__c FROM Inventory__c WHERE Bin_Location__c = :receivingBin.Id LIMIT 1
