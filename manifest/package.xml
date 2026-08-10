@@ -37,6 +37,11 @@
     </types>
     <types>
         <members>Warehouse_Operator</members>
+        <members>Warehouse_Receiver</members>
+        <members>Warehouse_Picker</members>
+        <members>Warehouse_Packer</members>
+        <members>Logistics_Coordinator</members>
+        <members>Warehouse_Manager</members>
         <name>PermissionSet</name>
     </types>
     <types>
