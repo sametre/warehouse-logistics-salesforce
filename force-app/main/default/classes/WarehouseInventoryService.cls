@@ -9,14 +9,10 @@ public with sharing class WarehouseInventoryService {
             throw new WarehouseInventoryException('Received quantity must be greater than zero.');
         }
 
-        Inventory__c inventory = [
-            SELECT Id, Product__c, Bin_Location__c, On_Hand__c, Reserved__c, Reorder_Level__c, Status__c
-            FROM Inventory__c
-            WHERE Id = :inventoryId
-            WITH USER_MODE
-            LIMIT 1
-            FOR UPDATE
-        ];
+        Inventory__c inventory = WarehouseInventorySelector.selectByIdForUpdate(inventoryId);
+        if (inventory == null) {
+            throw new WarehouseInventoryException('Inventory record could not be found or accessed.');
+        }
 
         applyQuantityChange(inventory, quantity);
         Database.update(inventory, AccessLevel.USER_MODE);
@@ -75,7 +71,6 @@ public with sharing class WarehouseInventoryService {
         }
 
         Inventory__c destinationInventory = getOrCreateInventory(productId, destinationBinId);
-
         applyQuantityChange(sourceInventory, -quantity);
         applyQuantityChange(destinationInventory, quantity);
         Database.update(new List<Inventory__c>{ sourceInventory, destinationInventory }, true, AccessLevel.USER_MODE);
@@ -100,63 +95,24 @@ public with sharing class WarehouseInventoryService {
     }
 
     public static List<Inventory__c> getInventory(Id warehouseId, Integer rowLimit) {
-        Integer safeLimit = rowLimit == null ? 50 : Math.min(Math.max(rowLimit, 1), 200);
-
-        if (warehouseId == null) {
-            return [
-                SELECT Id, Name, On_Hand__c, Reserved__c, Available__c, Reorder_Level__c, Status__c,
-                       Product__c, Product__r.Name,
-                       Bin_Location__c, Bin_Location__r.Name, Bin_Location__r.Bin_Code__c,
-                       Bin_Location__r.Warehouse__c, Bin_Location__r.Warehouse__r.Name
-                FROM Inventory__c
-                WITH USER_MODE
-                ORDER BY LastModifiedDate DESC
-                LIMIT :safeLimit
-            ];
-        }
-
-        return [
-            SELECT Id, Name, On_Hand__c, Reserved__c, Available__c, Reorder_Level__c, Status__c,
-                   Product__c, Product__r.Name,
-                   Bin_Location__c, Bin_Location__r.Name, Bin_Location__r.Bin_Code__c,
-                   Bin_Location__r.Warehouse__c, Bin_Location__r.Warehouse__r.Name
-            FROM Inventory__c
-            WHERE Bin_Location__r.Warehouse__c = :warehouseId
-            WITH USER_MODE
-            ORDER BY LastModifiedDate DESC
-            LIMIT :safeLimit
-        ];
+        return WarehouseInventorySelector.selectInventory(warehouseId, rowLimit);
     }
 
     private static Inventory__c getExistingInventory(Id productId, Id binLocationId) {
-        List<Inventory__c> records = [
-            SELECT Id, Product__c, Bin_Location__c, On_Hand__c, Reserved__c, Reorder_Level__c, Status__c
-            FROM Inventory__c
-            WHERE Product__c = :productId AND Bin_Location__c = :binLocationId
-            WITH USER_MODE
-            LIMIT 1
-            FOR UPDATE
-        ];
-        if (records.isEmpty()) {
+        Inventory__c inventory = WarehouseInventorySelector.selectByProductAndBinForUpdate(productId, binLocationId);
+        if (inventory == null) {
             throw new WarehouseInventoryException('No source inventory exists for the selected product and bin.');
         }
-        return records[0];
+        return inventory;
     }
 
     private static Inventory__c getOrCreateInventory(Id productId, Id binLocationId) {
-        List<Inventory__c> records = [
-            SELECT Id, Product__c, Bin_Location__c, On_Hand__c, Reserved__c, Reorder_Level__c, Status__c
-            FROM Inventory__c
-            WHERE Product__c = :productId AND Bin_Location__c = :binLocationId
-            WITH USER_MODE
-            LIMIT 1
-            FOR UPDATE
-        ];
-        if (!records.isEmpty()) {
-            return records[0];
+        Inventory__c inventory = WarehouseInventorySelector.selectByProductAndBinForUpdate(productId, binLocationId);
+        if (inventory != null) {
+            return inventory;
         }
 
-        Inventory__c inventory = new Inventory__c(
+        inventory = new Inventory__c(
             Product__c = productId,
             Bin_Location__c = binLocationId,
             On_Hand__c = 0,

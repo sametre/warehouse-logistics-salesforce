@@ -35,33 +35,7 @@ public with sharing class WarehouseOperationsController {
 
     @AuraEnabled(cacheable=true)
     public static List<ReceivingRow> getReceivingQueue(Id warehouseId) {
-        List<Inbound_Shipment_Line__c> lines;
-        if (warehouseId == null) {
-            lines = [
-                SELECT Id, Product__r.Name, Expected_Quantity__c, Received_Quantity__c,
-                       Inbound_Shipment__r.Name, Inbound_Shipment__r.Status__c,
-                       Inbound_Shipment__r.Expected_Date__c, Inbound_Shipment__r.Supplier__r.Name,
-                       Inbound_Shipment__r.Warehouse__c, Inbound_Shipment__r.Warehouse__r.Name
-                FROM Inbound_Shipment_Line__c
-                WHERE Inbound_Shipment__r.Status__c IN ('Expected', 'Receiving', 'Exception')
-                WITH USER_MODE
-                ORDER BY Inbound_Shipment__r.Expected_Date__c, CreatedDate
-                LIMIT 200
-            ];
-        } else {
-            lines = [
-                SELECT Id, Product__r.Name, Expected_Quantity__c, Received_Quantity__c,
-                       Inbound_Shipment__r.Name, Inbound_Shipment__r.Status__c,
-                       Inbound_Shipment__r.Expected_Date__c, Inbound_Shipment__r.Supplier__r.Name,
-                       Inbound_Shipment__r.Warehouse__c, Inbound_Shipment__r.Warehouse__r.Name
-                FROM Inbound_Shipment_Line__c
-                WHERE Inbound_Shipment__r.Warehouse__c = :warehouseId
-                  AND Inbound_Shipment__r.Status__c IN ('Expected', 'Receiving', 'Exception')
-                WITH USER_MODE
-                ORDER BY Inbound_Shipment__r.Expected_Date__c, CreatedDate
-                LIMIT 200
-            ];
-        }
+        List<Inbound_Shipment_Line__c> lines = WarehouseInboundSelector.selectReceivingQueue(warehouseId);
 
         List<ReceivingRow> result = new List<ReceivingRow>();
         for (Inbound_Shipment_Line__c line : lines) {
@@ -90,30 +64,7 @@ public with sharing class WarehouseOperationsController {
 
     @AuraEnabled(cacheable=true)
     public static List<PutawayRow> getPutawayQueue(Id warehouseId) {
-        List<Putaway_Task__c> tasks;
-        if (warehouseId == null) {
-            tasks = [
-                SELECT Id, Name, Warehouse__c, Warehouse__r.Name, Product__r.Name,
-                       Source_Bin__r.Bin_Code__c, Suggested_Bin__c, Suggested_Bin__r.Bin_Code__c,
-                       Quantity__c, Status__c
-                FROM Putaway_Task__c
-                WHERE Status__c IN ('Open', 'In Progress')
-                WITH USER_MODE
-                ORDER BY CreatedDate
-                LIMIT 200
-            ];
-        } else {
-            tasks = [
-                SELECT Id, Name, Warehouse__c, Warehouse__r.Name, Product__r.Name,
-                       Source_Bin__r.Bin_Code__c, Suggested_Bin__c, Suggested_Bin__r.Bin_Code__c,
-                       Quantity__c, Status__c
-                FROM Putaway_Task__c
-                WHERE Warehouse__c = :warehouseId AND Status__c IN ('Open', 'In Progress')
-                WITH USER_MODE
-                ORDER BY CreatedDate
-                LIMIT 200
-            ];
-        }
+        List<Putaway_Task__c> tasks = WarehouseInboundSelector.selectPutawayQueue(warehouseId);
 
         List<PutawayRow> result = new List<PutawayRow>();
         for (Putaway_Task__c task : tasks) {
@@ -135,26 +86,7 @@ public with sharing class WarehouseOperationsController {
 
     @AuraEnabled(cacheable=true)
     public static List<BinOption> getActiveBins(Id warehouseId) {
-        List<Bin_Location__c> bins;
-        if (warehouseId == null) {
-            bins = [
-                SELECT Id, Bin_Code__c, Bin_Type__c, Warehouse__c, Warehouse__r.Name
-                FROM Bin_Location__c
-                WHERE Is_Active__c = true
-                WITH USER_MODE
-                ORDER BY Warehouse__r.Name, Bin_Type__c, Bin_Code__c
-                LIMIT 300
-            ];
-        } else {
-            bins = [
-                SELECT Id, Bin_Code__c, Bin_Type__c, Warehouse__c, Warehouse__r.Name
-                FROM Bin_Location__c
-                WHERE Is_Active__c = true AND Warehouse__c = :warehouseId
-                WITH USER_MODE
-                ORDER BY Bin_Type__c, Bin_Code__c
-                LIMIT 300
-            ];
-        }
+        List<Bin_Location__c> bins = WarehouseInboundSelector.selectActiveBins(warehouseId);
 
         List<BinOption> result = new List<BinOption>();
         for (Bin_Location__c bin : bins) {
