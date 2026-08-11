@@ -28,7 +28,7 @@ public with sharing class WarehouseAutomationFaultAction {
                 continue;
             }
             logs.add(new Warehouse_Automation_Log__c(
-                Flow_Name__c = request.flowName.left(120),
+                Flow_Name__c = request.flowName.length() > 120 ? request.flowName.substring(0, 120) : request.flowName,
                 Related_Record_Id__c = normalizeRecordId(request.relatedRecordId),
                 Severity__c = 'Error',
                 Message__c = request.message,

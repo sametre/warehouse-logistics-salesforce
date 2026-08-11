@@ -98,6 +98,30 @@ private class WarehouseAutomationActionTest {
     }
 
     @IsTest
+    static void recordTriggeredFlowRoutesAllocationFailureToLog() {
+        Scenario scenario = createScenario();
+        Outbound_Order__c orderRecord = createDraftOrder(scenario, 'AUTO-FAIL-01', 80);
+
+        Test.startTest();
+        orderRecord.Status__c = 'Ready to Allocate';
+        update orderRecord;
+        Test.stopTest();
+
+        Outbound_Order__c failedOrder = [SELECT Status__c FROM Outbound_Order__c WHERE Id = :orderRecord.Id];
+        System.assertEquals('Ready to Allocate', failedOrder.Status__c);
+        Warehouse_Automation_Log__c logRecord = [
+            SELECT Flow_Name__c, Related_Record_Id__c, Severity__c, Message__c
+            FROM Warehouse_Automation_Log__c
+            WHERE Related_Record_Id__c = :String.valueOf(orderRecord.Id)
+            LIMIT 1
+        ];
+        System.assertEquals('Outbound_Order_Auto_Allocation', logRecord.Flow_Name__c);
+        System.assertEquals('Error', logRecord.Severity__c);
+        System.assert(logRecord.Message__c.contains('Insufficient'));
+        System.assertEquals(0, [SELECT COUNT() FROM Pick_Task__c WHERE Outbound_Order__c = :orderRecord.Id]);
+    }
+
+    @IsTest
     static void faultLoggerCreatesReviewableAuditRecord() {
         WarehouseAutomationFaultAction.Request request = new WarehouseAutomationFaultAction.Request();
         request.flowName = 'Unit_Test_Flow';
