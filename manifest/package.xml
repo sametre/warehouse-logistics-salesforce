@@ -1,18 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Package xmlns="http://soap.sforce.com/2006/04/metadata">
     <types>
+        <members>WarehouseAllocateOrderAction</members>
+        <members>WarehouseAutomationActionTest</members>
+        <members>WarehouseAutomationFaultAction</members>
         <members>WarehouseInventoryController</members>
         <members>WarehouseInventoryService</members>
         <members>WarehouseInventoryServiceTest</members>
         <members>WarehouseOperationsController</members>
-        <members>WarehouseReceivingService</members>
-        <members>WarehousePutawayService</members>
-        <members>WarehouseReceivingPutawayTest</members>
         <members>WarehouseOutboundController</members>
+        <members>WarehouseOutboundFlowTest</members>
         <members>WarehouseOutboundService</members>
         <members>WarehousePickingService</members>
+        <members>WarehousePutawayService</members>
+        <members>WarehouseReceivingPutawayTest</members>
+        <members>WarehouseReceivingService</members>
         <members>WarehouseShippingService</members>
-        <members>WarehouseOutboundFlowTest</members>
         <name>ApexClass</name>
     </types>
     <types>
@@ -20,49 +23,55 @@
         <name>CustomApplication</name>
     </types>
     <types>
-        <members>Warehouse__c</members>
         <members>Bin_Location__c</members>
-        <members>Inventory__c</members>
-        <members>Inventory_Transaction__c</members>
-        <members>Inbound_Shipment__c</members>
         <members>Inbound_Shipment_Line__c</members>
-        <members>Receiving_Task__c</members>
-        <members>Putaway_Task__c</members>
-        <members>Outbound_Order__c</members>
+        <members>Inbound_Shipment__c</members>
+        <members>Inventory_Transaction__c</members>
+        <members>Inventory__c</members>
         <members>Outbound_Order_Line__c</members>
-        <members>Pick_Task__c</members>
+        <members>Outbound_Order__c</members>
         <members>Package__c</members>
+        <members>Pick_Task__c</members>
+        <members>Putaway_Task__c</members>
+        <members>Receiving_Task__c</members>
         <members>Shipment__c</members>
+        <members>Warehouse_Automation_Log__c</members>
+        <members>Warehouse__c</members>
         <name>CustomObject</name>
     </types>
     <types>
-        <members>Warehouse_Operator</members>
-        <members>Warehouse_Receiver</members>
-        <members>Warehouse_Picker</members>
-        <members>Warehouse_Packer</members>
+        <members>Outbound_Order_Auto_Allocation</members>
+        <name>Flow</name>
+    </types>
+    <types>
         <members>Logistics_Coordinator</members>
         <members>Warehouse_Manager</members>
+        <members>Warehouse_Operator</members>
+        <members>Warehouse_Packer</members>
+        <members>Warehouse_Picker</members>
+        <members>Warehouse_Receiver</members>
         <name>PermissionSet</name>
     </types>
     <types>
-        <members>Warehouse__c</members>
         <members>Bin_Location__c</members>
-        <members>Inventory__c</members>
-        <members>Inventory_Transaction__c</members>
         <members>Inbound_Shipment__c</members>
-        <members>Receiving_Task__c</members>
-        <members>Putaway_Task__c</members>
+        <members>Inventory_Transaction__c</members>
+        <members>Inventory__c</members>
         <members>Outbound_Order__c</members>
-        <members>Pick_Task__c</members>
         <members>Package__c</members>
+        <members>Pick_Task__c</members>
+        <members>Putaway_Task__c</members>
+        <members>Receiving_Task__c</members>
         <members>Shipment__c</members>
+        <members>Warehouse_Automation_Log__c</members>
+        <members>Warehouse__c</members>
         <name>CustomTab</name>
     </types>
     <types>
         <members>warehouseInventoryWorkspace</members>
-        <members>warehouseReceivingWorkspace</members>
         <members>warehouseOperationsWorkspace</members>
         <members>warehouseOutboundWorkspace</members>
+        <members>warehouseReceivingWorkspace</members>
         <name>LightningComponentBundle</name>
     </types>
     <version>67.0</version>
