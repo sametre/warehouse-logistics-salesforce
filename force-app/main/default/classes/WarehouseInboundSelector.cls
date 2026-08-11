@@ -1,7 +1,7 @@
 public with sharing class WarehouseInboundSelector {
     public static Inbound_Shipment_Line__c selectShipmentLineForUpdate(Id shipmentLineId) {
         List<Inbound_Shipment_Line__c> records = [
-            SELECT Id, Name, Product__c, Expected_Quantity__c, Received_Quantity__c, Damaged_Quantity__c,
+            SELECT Id, Product__c, Expected_Quantity__c, Received_Quantity__c, Damaged_Quantity__c,
                    Inbound_Shipment__c, Inbound_Shipment__r.Name, Inbound_Shipment__r.Status__c,
                    Inbound_Shipment__r.Warehouse__c
             FROM Inbound_Shipment_Line__c

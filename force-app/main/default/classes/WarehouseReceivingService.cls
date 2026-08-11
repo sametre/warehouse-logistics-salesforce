@@ -70,7 +70,14 @@ public with sharing class WarehouseReceivingService {
 
             line.Received_Quantity__c = alreadyReceived + receivedQuantity;
             line.Damaged_Quantity__c = (line.Damaged_Quantity__c == null ? 0 : line.Damaged_Quantity__c) + safeDamaged;
-            Database.update(line, AccessLevel.USER_MODE);
+            Database.update(
+                new Inbound_Shipment_Line__c(
+                    Id = line.Id,
+                    Received_Quantity__c = line.Received_Quantity__c,
+                    Damaged_Quantity__c = line.Damaged_Quantity__c
+                ),
+                AccessLevel.USER_MODE
+            );
 
             Receiving_Task__c receivingTask = new Receiving_Task__c(
                 Inbound_Shipment__c = line.Inbound_Shipment__c,

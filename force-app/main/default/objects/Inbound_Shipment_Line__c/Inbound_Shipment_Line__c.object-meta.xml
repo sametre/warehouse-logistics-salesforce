@@ -10,5 +10,5 @@
         <type>AutoNumber</type>
     </nameField>
     <pluralLabel>Inbound Shipment Lines</pluralLabel>
-    <sharingModel>ReadWrite</sharingModel>
+    <sharingModel>ControlledByParent</sharingModel>
 </CustomObject>
