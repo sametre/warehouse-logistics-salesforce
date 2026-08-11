@@ -93,10 +93,10 @@ private class WarehousePostalServiceTest {
     }
 
     @IsTest
-    static void providerFailureAndMalformedResponseAreHandled() {
+    static void providerFailureReturnsControlledError() {
         Outbound_Order__c orderRecord = [SELECT Id FROM Outbound_Order__c LIMIT 1];
-
         Test.setMock(HttpCalloutMock.class, new PostalMock(503, '{"error":"maintenance"}'));
+
         Boolean providerFailure = false;
         Test.startTest();
         try {
@@ -107,8 +107,13 @@ private class WarehousePostalServiceTest {
         }
         Test.stopTest();
         System.assertEquals(true, providerFailure);
+    }
 
+    @IsTest
+    static void malformedProviderResponseReturnsControlledError() {
+        Outbound_Order__c orderRecord = [SELECT Id FROM Outbound_Order__c LIMIT 1];
         Test.setMock(HttpCalloutMock.class, new PostalMock(200, '{not-json'));
+
         Boolean malformed = false;
         Test.startTest();
         try {
@@ -137,6 +142,7 @@ private class WarehousePostalServiceTest {
         insert packageRecord;
 
         Boolean missingRejected = false;
+        Boolean staleRejected = false;
         Test.startTest();
         try {
             WarehouseShippingService.shipPackage(packageRecord.Id, 'Demo Express', 'POST-1', null);
@@ -144,8 +150,6 @@ private class WarehousePostalServiceTest {
             missingRejected = true;
             System.assert(ex.getMessage().contains('Validate the current'));
         }
-        Test.stopTest();
-        System.assertEquals(true, missingRejected);
 
         orderRecord = [
             SELECT Id, Shipping_Country_Code__c, Shipping_Postal_Code__c
@@ -156,8 +160,6 @@ private class WarehousePostalServiceTest {
         orderRecord.Shipping_Validated_Postal_Code__c = '10001';
         update orderRecord;
 
-        Boolean staleRejected = false;
-        Test.startTest();
         try {
             WarehouseShippingService.shipPackage(packageRecord.Id, 'Demo Express', 'POST-2', null);
         } catch (WarehouseShippingService.ShippingException ex) {
@@ -165,6 +167,7 @@ private class WarehousePostalServiceTest {
             System.assert(ex.getMessage().contains('Validate the current'));
         }
         Test.stopTest();
+        System.assertEquals(true, missingRejected);
         System.assertEquals(true, staleRejected);
     }
 
