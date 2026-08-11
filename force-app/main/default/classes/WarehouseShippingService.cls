@@ -91,8 +91,16 @@ public with sharing class WarehouseShippingService {
             if (orderRecord == null) {
                 throw new ShippingException('Outbound order could not be found or accessed.');
             }
-            if (orderRecord.Shipping_Address_Validated__c != true) {
-                throw new ShippingException('Validate the shipping country and postal code before releasing the shipment.');
+            if (
+                orderRecord.Shipping_Address_Validated__c != true ||
+                String.isBlank(orderRecord.Shipping_Validated_Country_Code__c) ||
+                String.isBlank(orderRecord.Shipping_Validated_Postal_Code__c) ||
+                orderRecord.Shipping_Country_Code__c == null ||
+                orderRecord.Shipping_Postal_Code__c == null ||
+                orderRecord.Shipping_Validated_Country_Code__c != orderRecord.Shipping_Country_Code__c.trim().toUpperCase() ||
+                orderRecord.Shipping_Validated_Postal_Code__c != orderRecord.Shipping_Postal_Code__c.trim()
+            ) {
+                throw new ShippingException('Validate the current shipping country and postal code before releasing the shipment.');
             }
 
             Shipment__c shipment = new Shipment__c(

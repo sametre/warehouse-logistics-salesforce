@@ -107,6 +107,8 @@ public with sharing class WarehousePostalService {
             currentOrder.Shipping_Address_Validated__c = true;
             currentOrder.Shipping_Address_Validated_At__c = System.now();
             currentOrder.Shipping_Address_Source__c = location.source;
+            currentOrder.Shipping_Validated_Country_Code__c = requestedCountry;
+            currentOrder.Shipping_Validated_Postal_Code__c = requestedPostal;
             Database.update(currentOrder, AccessLevel.USER_MODE);
 
             transactionScope.complete();
