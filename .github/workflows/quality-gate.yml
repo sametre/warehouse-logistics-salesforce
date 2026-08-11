@@ -88,13 +88,13 @@ jobs:
             --junit \
             --results-dir reports/deploy
 
-      - name: Run Week 10 Apex suite with coverage
+      - name: Run Week 11 Apex suite with coverage
         if: env.SF_AUTH_URL != ''
         run: |
           mkdir -p reports/apex
           sf apex run test \
             --target-org warehouse-ci \
-            --suite-names Warehouse_Week10 \
+            --suite-names Warehouse_Week11 \
             --code-coverage \
             --detailed-coverage \
             --result-format junit \

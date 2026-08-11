@@ -73,7 +73,9 @@ public class WarehouseTestDataFactory {
             Priority__c = 'Normal',
             Order_Date__c = Date.today(),
             Required_Ship_Date__c = Date.today().addDays(2),
-            External_Order_Reference__c = externalReference
+            External_Order_Reference__c = externalReference,
+            Shipping_Country_Code__c = 'US',
+            Shipping_Postal_Code__c = '90210'
         );
         insert orderRecord;
 

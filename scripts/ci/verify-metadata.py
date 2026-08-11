@@ -54,6 +54,8 @@ mapping = {
     'PermissionSet': lambda n: (DEFAULT / 'permissionsets' / f'{n}.permissionset-meta.xml').exists(),
     'CustomTab': lambda n: (DEFAULT / 'tabs' / f'{n}.tab-meta.xml').exists(),
     'LightningComponentBundle': lambda n: (DEFAULT / 'lwc' / n).is_dir(),
+    'NamedCredential': lambda n: (DEFAULT / 'namedCredentials' / f'{n}.namedCredential-meta.xml').exists(),
+    'ExternalCredential': lambda n: (DEFAULT / 'externalCredentials' / f'{n}.externalCredential-meta.xml').exists(),
 }
 
 tree = ET.parse(MANIFEST)

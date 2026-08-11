@@ -75,7 +75,41 @@ public with sharing class WarehouseOutboundSelector {
 
     public static Outbound_Order__c selectOrderForUpdate(Id orderId) {
         List<Outbound_Order__c> records = [
-            SELECT Id, Name, Warehouse__c, Status__c
+            SELECT Id, Name, Warehouse__c, Status__c, Shipping_Address_Validated__c,
+                   Shipping_Country_Code__c, Shipping_Postal_Code__c,
+                   Shipping_Validated_Country_Code__c, Shipping_Validated_Postal_Code__c
+            FROM Outbound_Order__c
+            WHERE Id = :orderId
+            WITH USER_MODE
+            LIMIT 1
+            FOR UPDATE
+        ];
+        return records.isEmpty() ? null : records[0];
+    }
+
+
+    public static Outbound_Order__c selectOrderDestination(Id orderId) {
+        List<Outbound_Order__c> records = [
+            SELECT Id, Shipping_Country_Code__c, Shipping_Postal_Code__c,
+                   Shipping_City__c, Shipping_Region__c, Shipping_Latitude__c,
+                   Shipping_Longitude__c, Shipping_Address_Validated__c,
+                   Shipping_Address_Validated_At__c, Shipping_Address_Source__c,
+                   Shipping_Validated_Country_Code__c, Shipping_Validated_Postal_Code__c
+            FROM Outbound_Order__c
+            WHERE Id = :orderId
+            WITH USER_MODE
+            LIMIT 1
+        ];
+        return records.isEmpty() ? null : records[0];
+    }
+
+    public static Outbound_Order__c selectOrderDestinationForUpdate(Id orderId) {
+        List<Outbound_Order__c> records = [
+            SELECT Id, Shipping_Country_Code__c, Shipping_Postal_Code__c,
+                   Shipping_City__c, Shipping_Region__c, Shipping_Latitude__c,
+                   Shipping_Longitude__c, Shipping_Address_Validated__c,
+                   Shipping_Address_Validated_At__c, Shipping_Address_Source__c,
+                   Shipping_Validated_Country_Code__c, Shipping_Validated_Postal_Code__c
             FROM Outbound_Order__c
             WHERE Id = :orderId
             WITH USER_MODE
@@ -192,6 +226,12 @@ public with sharing class WarehouseOutboundSelector {
         if (warehouseId == null) {
             return [
                 SELECT Id, Name, Outbound_Order__c, Outbound_Order__r.Name,
+                       Outbound_Order__r.Shipping_Country_Code__c,
+                       Outbound_Order__r.Shipping_Postal_Code__c,
+                       Outbound_Order__r.Shipping_City__c,
+                       Outbound_Order__r.Shipping_Region__c,
+                       Outbound_Order__r.Shipping_Address_Validated__c,
+                       Outbound_Order__r.Shipping_Address_Validated_At__c,
                        Warehouse__c, Warehouse__r.Name, Weight__c, Status__c, Packed_At__c
                 FROM Package__c
                 WHERE Status__c = 'Ready to Ship'
@@ -202,6 +242,12 @@ public with sharing class WarehouseOutboundSelector {
         }
         return [
             SELECT Id, Name, Outbound_Order__c, Outbound_Order__r.Name,
+                   Outbound_Order__r.Shipping_Country_Code__c,
+                   Outbound_Order__r.Shipping_Postal_Code__c,
+                   Outbound_Order__r.Shipping_City__c,
+                   Outbound_Order__r.Shipping_Region__c,
+                   Outbound_Order__r.Shipping_Address_Validated__c,
+                   Outbound_Order__r.Shipping_Address_Validated_At__c,
                    Warehouse__c, Warehouse__r.Name, Weight__c, Status__c, Packed_At__c
             FROM Package__c
             WHERE Warehouse__c = :warehouseId AND Status__c = 'Ready to Ship'

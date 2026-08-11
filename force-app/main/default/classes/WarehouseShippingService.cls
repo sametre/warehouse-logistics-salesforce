@@ -85,6 +85,24 @@ public with sharing class WarehouseShippingService {
                 throw new ShippingException('This package already has an active shipment.');
             }
 
+            Outbound_Order__c orderRecord = WarehouseOutboundSelector.selectOrderForUpdate(
+                packageRecord.Outbound_Order__c
+            );
+            if (orderRecord == null) {
+                throw new ShippingException('Outbound order could not be found or accessed.');
+            }
+            if (
+                orderRecord.Shipping_Address_Validated__c != true ||
+                String.isBlank(orderRecord.Shipping_Validated_Country_Code__c) ||
+                String.isBlank(orderRecord.Shipping_Validated_Postal_Code__c) ||
+                orderRecord.Shipping_Country_Code__c == null ||
+                orderRecord.Shipping_Postal_Code__c == null ||
+                orderRecord.Shipping_Validated_Country_Code__c != orderRecord.Shipping_Country_Code__c.trim().toUpperCase() ||
+                orderRecord.Shipping_Validated_Postal_Code__c != orderRecord.Shipping_Postal_Code__c.trim()
+            ) {
+                throw new ShippingException('Validate the current shipping country and postal code before releasing the shipment.');
+            }
+
             Shipment__c shipment = new Shipment__c(
                 Outbound_Order__c = packageRecord.Outbound_Order__c,
                 Package__c = packageRecord.Id,
@@ -100,12 +118,6 @@ public with sharing class WarehouseShippingService {
             packageRecord.Status__c = 'Shipped';
             Database.update(packageRecord, AccessLevel.USER_MODE);
 
-            Outbound_Order__c orderRecord = WarehouseOutboundSelector.selectOrderForUpdate(
-                packageRecord.Outbound_Order__c
-            );
-            if (orderRecord == null) {
-                throw new ShippingException('Outbound order could not be found or accessed.');
-            }
             orderRecord.Status__c = 'Shipped';
             Database.update(orderRecord, AccessLevel.USER_MODE);
 

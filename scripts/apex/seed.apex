@@ -101,7 +101,10 @@ Outbound_Order__c outboundOrder = new Outbound_Order__c(
     Priority__c = 'High',
     Order_Date__c = Date.today(),
     Required_Ship_Date__c = Date.today().addDays(1),
-    External_Order_Reference__c = 'WEB-DEMO-001'
+    External_Order_Reference__c = 'WEB-DEMO-001',
+    Shipping_Address__c = 'Beverly Hills demo destination',
+    Shipping_Country_Code__c = 'US',
+    Shipping_Postal_Code__c = '90210'
 );
 insert outboundOrder;
 
