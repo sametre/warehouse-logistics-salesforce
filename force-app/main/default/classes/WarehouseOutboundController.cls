@@ -48,58 +48,12 @@ public with sharing class WarehouseOutboundController {
 
     @AuraEnabled(cacheable=true)
     public static List<OrderRow> getAllocationQueue(Id warehouseId) {
-        List<Outbound_Order__c> orders;
-        if (warehouseId == null) {
-            orders = [
-                SELECT Id, Name, Customer__r.Name, Warehouse__c, Warehouse__r.Name,
-                       Status__c, Priority__c, Required_Ship_Date__c
-                FROM Outbound_Order__c
-                WHERE Status__c IN ('Draft', 'Ready to Allocate')
-                WITH USER_MODE
-                ORDER BY Priority__c DESC, Required_Ship_Date__c, CreatedDate
-                LIMIT 200
-            ];
-        } else {
-            orders = [
-                SELECT Id, Name, Customer__r.Name, Warehouse__c, Warehouse__r.Name,
-                       Status__c, Priority__c, Required_Ship_Date__c
-                FROM Outbound_Order__c
-                WHERE Warehouse__c = :warehouseId AND Status__c IN ('Draft', 'Ready to Allocate')
-                WITH USER_MODE
-                ORDER BY Priority__c DESC, Required_Ship_Date__c, CreatedDate
-                LIMIT 200
-            ];
-        }
-        return mapOrders(orders);
+        return mapOrders(WarehouseOutboundSelector.selectAllocationQueue(warehouseId));
     }
 
     @AuraEnabled(cacheable=true)
     public static List<PickRow> getPickingQueue(Id warehouseId) {
-        List<Pick_Task__c> tasks;
-        if (warehouseId == null) {
-            tasks = [
-                SELECT Id, Name, Outbound_Order__r.Name, Warehouse__c, Warehouse__r.Name,
-                       Product__r.Name, Source_Bin__r.Bin_Code__c,
-                       Quantity__c, Picked_Quantity__c, Status__c
-                FROM Pick_Task__c
-                WHERE Status__c IN ('Open', 'In Progress')
-                WITH USER_MODE
-                ORDER BY CreatedDate
-                LIMIT 300
-            ];
-        } else {
-            tasks = [
-                SELECT Id, Name, Outbound_Order__r.Name, Warehouse__c, Warehouse__r.Name,
-                       Product__r.Name, Source_Bin__r.Bin_Code__c,
-                       Quantity__c, Picked_Quantity__c, Status__c
-                FROM Pick_Task__c
-                WHERE Warehouse__c = :warehouseId AND Status__c IN ('Open', 'In Progress')
-                WITH USER_MODE
-                ORDER BY CreatedDate
-                LIMIT 300
-            ];
-        }
-
+        List<Pick_Task__c> tasks = WarehouseOutboundSelector.selectPickingQueue(warehouseId);
         List<PickRow> rows = new List<PickRow>();
         for (Pick_Task__c task : tasks) {
             Decimal taskQuantity = task.Quantity__c == null ? 0 : task.Quantity__c;
@@ -123,31 +77,8 @@ public with sharing class WarehouseOutboundController {
 
     @AuraEnabled(cacheable=true)
     public static List<PackRow> getPackingQueue(Id warehouseId) {
-        List<Outbound_Order__c> orders;
-        if (warehouseId == null) {
-            orders = [
-                SELECT Id, Name, Customer__r.Name, Warehouse__c, Warehouse__r.Name,
-                       Priority__c, Required_Ship_Date__c
-                FROM Outbound_Order__c
-                WHERE Status__c = 'Packing'
-                WITH USER_MODE
-                ORDER BY Required_Ship_Date__c, CreatedDate
-                LIMIT 200
-            ];
-        } else {
-            orders = [
-                SELECT Id, Name, Customer__r.Name, Warehouse__c, Warehouse__r.Name,
-                       Priority__c, Required_Ship_Date__c
-                FROM Outbound_Order__c
-                WHERE Warehouse__c = :warehouseId AND Status__c = 'Packing'
-                WITH USER_MODE
-                ORDER BY Required_Ship_Date__c, CreatedDate
-                LIMIT 200
-            ];
-        }
-
         List<PackRow> rows = new List<PackRow>();
-        for (Outbound_Order__c orderRecord : orders) {
+        for (Outbound_Order__c orderRecord : WarehouseOutboundSelector.selectPackingQueue(warehouseId)) {
             PackRow row = new PackRow();
             row.orderId = orderRecord.Id;
             row.orderNumber = orderRecord.Name;
@@ -163,31 +94,8 @@ public with sharing class WarehouseOutboundController {
 
     @AuraEnabled(cacheable=true)
     public static List<ShipRow> getShippingQueue(Id warehouseId) {
-        List<Package__c> packages;
-        if (warehouseId == null) {
-            packages = [
-                SELECT Id, Name, Outbound_Order__c, Outbound_Order__r.Name,
-                       Warehouse__c, Warehouse__r.Name, Weight__c, Status__c, Packed_At__c
-                FROM Package__c
-                WHERE Status__c = 'Ready to Ship'
-                WITH USER_MODE
-                ORDER BY Packed_At__c, CreatedDate
-                LIMIT 200
-            ];
-        } else {
-            packages = [
-                SELECT Id, Name, Outbound_Order__c, Outbound_Order__r.Name,
-                       Warehouse__c, Warehouse__r.Name, Weight__c, Status__c, Packed_At__c
-                FROM Package__c
-                WHERE Warehouse__c = :warehouseId AND Status__c = 'Ready to Ship'
-                WITH USER_MODE
-                ORDER BY Packed_At__c, CreatedDate
-                LIMIT 200
-            ];
-        }
-
         List<ShipRow> rows = new List<ShipRow>();
-        for (Package__c packageRecord : packages) {
+        for (Package__c packageRecord : WarehouseOutboundSelector.selectShippingQueue(warehouseId)) {
             ShipRow row = new ShipRow();
             row.packageId = packageRecord.Id;
             row.packageNumber = packageRecord.Name;
