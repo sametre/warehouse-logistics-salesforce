@@ -151,7 +151,8 @@ private class WarehouseArchitectureTest {
 
         System.assertEquals(2, results.size());
         System.assert(queriesUsed <= 5, 'Bulk allocation should use a bounded selector query set, not queries per order.');
-        System.assertEquals(12, [SELECT SUM(Reserved__c) total FROM Inventory__c][0].get('total'));
+        AggregateResult inventoryTotal = [SELECT SUM(Reserved__c) total FROM Inventory__c];
+        System.assertEquals(12, (Decimal) inventoryTotal.get('total'));
     }
 
 }
