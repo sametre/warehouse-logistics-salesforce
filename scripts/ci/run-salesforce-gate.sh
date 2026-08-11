@@ -29,7 +29,7 @@ sf project deploy start \
 
 sf apex run test \
   --target-org "$TARGET_ORG" \
-  --suite-names Warehouse_Week10 \
+  --suite-names Warehouse_Week11 \
   --code-coverage \
   --detailed-coverage \
   --result-format junit \
