@@ -100,6 +100,20 @@
                                 <div><span class="eyebrow">SHIP</span><h3>{selectedPackage.packageNumber} · {selectedPackage.orderNumber}</h3></div>
                                 <span class="quantity-pill">{selectedPackage.weight} weight</span>
                             </div>
+                            <div class="destination-check slds-box slds-theme_default slds-m-bottom_medium">
+                                <div class="slds-grid slds-wrap slds-grid_vertical-align-center">
+                                    <div class="slds-col slds-grow">
+                                        <span class="eyebrow">DELIVERY DESTINATION</span>
+                                        <p class="slds-text-heading_small">{selectedPackage.destination}</p>
+                                        <p class="hint">Postal API status: {selectedDestinationStatus}</p>
+                                    </div>
+                                    <div class="slds-col slds-no-flex">
+                                        <lightning-button label="Validate Destination" icon-name="utility:check"
+                                            onclick={validateSelectedDestination} disabled={isSaving}>
+                                        </lightning-button>
+                                    </div>
+                                </div>
+                            </div>
                             <div class="slds-grid slds-wrap slds-gutters">
                                 <div class="slds-col slds-size_1-of-1 slds-large-size_1-of-3">
                                     <lightning-input label="Carrier" value={carrier} onchange={handleCarrier} required></lightning-input>

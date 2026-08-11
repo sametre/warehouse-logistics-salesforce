@@ -9,6 +9,7 @@ import allocateOrder from '@salesforce/apex/WarehouseOutboundController.allocate
 import completePick from '@salesforce/apex/WarehouseOutboundController.completePick';
 import packOrder from '@salesforce/apex/WarehouseOutboundController.packOrder';
 import shipPackage from '@salesforce/apex/WarehouseOutboundController.shipPackage';
+import validateOrderDestination from '@salesforce/apex/WarehousePostalController.validateOrderDestination';
 
 const ORDER_COLUMNS = [
     { label: 'Order', fieldName: 'orderNumber' },
@@ -54,6 +55,8 @@ const SHIP_COLUMNS = [
     { label: 'Order', fieldName: 'orderNumber' },
     { label: 'Warehouse', fieldName: 'warehouseName' },
     { label: 'Weight', fieldName: 'weight', type: 'number' },
+    { label: 'Destination', fieldName: 'destination' },
+    { label: 'Validated', fieldName: 'destinationValidated', type: 'boolean', initialWidth: 100 },
     { label: 'Packed At', fieldName: 'packedAt', type: 'date' },
     { label: 'Status', fieldName: 'status' },
     {
@@ -124,6 +127,8 @@ export default class WarehouseOutboundWorkspace extends LightningElement {
     get hasPickRows() { return this.pickRows.length > 0; }
     get hasPackingRows() { return this.packingRows.length > 0; }
     get hasShippingRows() { return this.shippingRows.length > 0; }
+    get selectedDestinationValidated() { return this.selectedPackage?.destinationValidated === true; }
+    get selectedDestinationStatus() { return this.selectedDestinationValidated ? 'Validated' : 'Validation required'; }
 
     async handleOrderAction(event) {
         const row = event.detail.row;
@@ -206,7 +211,39 @@ export default class WarehouseOutboundWorkspace extends LightningElement {
         }
     }
 
+
+    async validateSelectedDestination() {
+        if (!this.selectedPackage?.orderId) return;
+        this.isSaving = true;
+        try {
+            const result = await validateOrderDestination({ orderId: this.selectedPackage.orderId });
+            const destination = [result.city, result.region, result.postalCode, result.countryCode]
+                .filter(Boolean)
+                .filter((value, index, items) => items.indexOf(value) === index)
+                .join(', ');
+            this.selectedPackage = {
+                ...this.selectedPackage,
+                destinationValidated: true,
+                destination,
+                city: result.city,
+                region: result.region,
+                postalCode: result.postalCode,
+                countryCode: result.countryCode
+            };
+            this.toast('Destination validated', `${destination} confirmed by ${result.source}.`, 'success');
+            await this.refreshAll();
+        } catch (error) {
+            this.showError('Destination validation failed', error);
+        } finally {
+            this.isSaving = false;
+        }
+    }
+
     async submitShip() {
+        if (!this.selectedDestinationValidated) {
+            this.toast('Destination validation required', 'Validate the current country and postal code before release.', 'warning');
+            return;
+        }
         if (!this.carrier?.trim() || !this.trackingNumber?.trim()) {
             this.toast('Shipping details required', 'Enter both carrier and tracking number.', 'warning');
             return;

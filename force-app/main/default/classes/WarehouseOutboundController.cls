@@ -44,6 +44,13 @@ public with sharing class WarehouseOutboundController {
         @AuraEnabled public Decimal weight;
         @AuraEnabled public String status;
         @AuraEnabled public Datetime packedAt;
+        @AuraEnabled public String countryCode;
+        @AuraEnabled public String postalCode;
+        @AuraEnabled public String city;
+        @AuraEnabled public String region;
+        @AuraEnabled public String destination;
+        @AuraEnabled public Boolean destinationValidated;
+        @AuraEnabled public Datetime destinationValidatedAt;
     }
 
     @AuraEnabled(cacheable=true)
@@ -106,6 +113,20 @@ public with sharing class WarehouseOutboundController {
             row.weight = packageRecord.Weight__c;
             row.status = packageRecord.Status__c;
             row.packedAt = packageRecord.Packed_At__c;
+            if (packageRecord.Outbound_Order__r != null) {
+                row.countryCode = packageRecord.Outbound_Order__r.Shipping_Country_Code__c;
+                row.postalCode = packageRecord.Outbound_Order__r.Shipping_Postal_Code__c;
+                row.city = packageRecord.Outbound_Order__r.Shipping_City__c;
+                row.region = packageRecord.Outbound_Order__r.Shipping_Region__c;
+                row.destinationValidated = packageRecord.Outbound_Order__r.Shipping_Address_Validated__c;
+                row.destinationValidatedAt = packageRecord.Outbound_Order__r.Shipping_Address_Validated_At__c;
+                List<String> destinationParts = new List<String>();
+                if (!String.isBlank(row.city)) destinationParts.add(row.city);
+                if (!String.isBlank(row.region) && row.region != row.city) destinationParts.add(row.region);
+                if (!String.isBlank(row.postalCode)) destinationParts.add(row.postalCode);
+                if (!String.isBlank(row.countryCode)) destinationParts.add(row.countryCode);
+                row.destination = String.join(destinationParts, ', ');
+            }
             rows.add(row);
         }
         return rows;
