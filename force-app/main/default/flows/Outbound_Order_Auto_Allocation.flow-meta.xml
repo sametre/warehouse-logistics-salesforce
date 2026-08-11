@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Flow xmlns="http://soap.sforce.com/2006/04/metadata">
+    <actionCalls>
+        <name>Allocate_Order</name>
+        <label>Allocate Order</label>
+        <locationX>176</locationX>
+        <locationY>240</locationY>
+        <actionName>WarehouseAllocateOrderAction</actionName>
+        <actionType>apex</actionType>
+        <faultConnector>
+            <targetReference>Log_Automation_Fault</targetReference>
+        </faultConnector>
+        <flowTransactionModel>CurrentTransaction</flowTransactionModel>
+        <inputParameters>
+            <name>orderId</name>
+            <value>
+                <elementReference>$Record.Id</elementReference>
+            </value>
+        </inputParameters>
+        <nameSegment>WarehouseAllocateOrderAction</nameSegment>
+        <storeOutputAutomatically>true</storeOutputAutomatically>
+    </actionCalls>
+    <actionCalls>
+        <name>Log_Automation_Fault</name>
+        <label>Log Automation Fault</label>
+        <locationX>440</locationX>
+        <locationY>360</locationY>
+        <actionName>WarehouseAutomationFaultAction</actionName>
+        <actionType>apex</actionType>
+        <flowTransactionModel>CurrentTransaction</flowTransactionModel>
+        <inputParameters>
+            <name>flowName</name>
+            <value>
+                <stringValue>Outbound_Order_Auto_Allocation</stringValue>
+            </value>
+        </inputParameters>
+        <inputParameters>
+            <name>relatedRecordId</name>
+            <value>
+                <elementReference>$Record.Id</elementReference>
+            </value>
+        </inputParameters>
+        <inputParameters>
+            <name>message</name>
+            <value>
+                <elementReference>$Flow.FaultMessage</elementReference>
+            </value>
+        </inputParameters>
+        <inputParameters>
+            <name>context</name>
+            <value>
+                <stringValue>Automatic outbound allocation failed after the order entered Ready to Allocate.</stringValue>
+            </value>
+        </inputParameters>
+        <nameSegment>WarehouseAutomationFaultAction</nameSegment>
+    </actionCalls>
+    <apiVersion>67.0</apiVersion>
+    <description>Automatically allocates warehouse inventory when an outbound order enters Ready to Allocate. Complex inventory reservation remains in bulk-safe Apex, while the Flow owns orchestration and fault routing.</description>
+    <environments>Default</environments>
+    <interviewLabel>Outbound Order Auto Allocation {!$Flow.CurrentDateTime}</interviewLabel>
+    <label>Outbound Order - Auto Allocation</label>
+    <processType>AutoLaunchedFlow</processType>
+    <start>
+        <locationX>50</locationX>
+        <locationY>0</locationY>
+        <connector>
+            <targetReference>Allocate_Order</targetReference>
+        </connector>
+        <filterLogic>and</filterLogic>
+        <filters>
+            <field>Status__c</field>
+            <operator>EqualTo</operator>
+            <value>
+                <stringValue>Ready to Allocate</stringValue>
+            </value>
+        </filters>
+        <object>Outbound_Order__c</object>
+        <recordTriggerType>CreateAndUpdate</recordTriggerType>
+        <triggerType>RecordAfterSave</triggerType>
+    </start>
+    <status>Active</status>
+    <triggerOrder>100</triggerOrder>
+</Flow>

@@ -30,3 +30,7 @@ API version: 67.0.
 ## Outbound fulfillment
 
 The current build also covers order allocation, inventory reservation, pick tasks, packing, package creation, and shipment release. Physical inventory is reduced only when a pick is recorded; allocation uses the reserved quantity so available stock stays accurate.
+## Week 07 core automation
+
+When an outbound order moves to **Ready to Allocate**, the active record-triggered Flow `Outbound_Order_Auto_Allocation` calls a bulk-safe invocable Apex action. Apex owns inventory locking, reservation, and pick-task creation; Flow owns orchestration and routes failures to `Warehouse_Automation_Log__c` for manager review.
+
