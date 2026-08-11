@@ -53,11 +53,25 @@ public with sharing class WarehousePostalService {
             throw new PostalException('Postal validation service returned an invalid response.');
         }
 
-        List<Object> places = (List<Object>) payload.get('places');
-        if (places == null || places.isEmpty()) {
-            throw new PostalException('Postal validation service returned no matching location.');
+        if (payload == null) {
+            throw new PostalException('Postal validation service returned an invalid response.');
         }
-        Map<String, Object> firstPlace = (Map<String, Object>) places[0];
+        List<Object> places;
+        Map<String, Object> firstPlace;
+        try {
+            places = (List<Object>) payload.get('places');
+            if (places == null || places.isEmpty()) {
+                throw new PostalException('Postal validation service returned no matching location.');
+            }
+            firstPlace = (Map<String, Object>) places[0];
+            if (firstPlace == null) {
+                throw new PostalException('Postal validation service returned no usable location.');
+            }
+        } catch (PostalException ex) {
+            throw ex;
+        } catch (Exception ex) {
+            throw new PostalException('Postal validation service returned an invalid response.');
+        }
 
         PostalLocation result = new PostalLocation();
         result.countryCode = stringValue(payload.get('country abbreviation'));
