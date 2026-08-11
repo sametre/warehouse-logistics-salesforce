@@ -1,21 +1,26 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<?xml version='1.0' encoding='UTF-8'?>
 <Package xmlns="http://soap.sforce.com/2006/04/metadata">
     <types>
         <members>WarehouseAllocateOrderAction</members>
+        <members>WarehouseArchitectureTest</members>
         <members>WarehouseAutomationActionTest</members>
         <members>WarehouseAutomationFaultAction</members>
+        <members>WarehouseInboundSelector</members>
         <members>WarehouseInventoryController</members>
+        <members>WarehouseInventorySelector</members>
         <members>WarehouseInventoryService</members>
         <members>WarehouseInventoryServiceTest</members>
         <members>WarehouseOperationsController</members>
         <members>WarehouseOutboundController</members>
         <members>WarehouseOutboundFlowTest</members>
+        <members>WarehouseOutboundSelector</members>
         <members>WarehouseOutboundService</members>
         <members>WarehousePickingService</members>
         <members>WarehousePutawayService</members>
         <members>WarehouseReceivingPutawayTest</members>
         <members>WarehouseReceivingService</members>
         <members>WarehouseShippingService</members>
+        <members>WarehouseTransactionManager</members>
         <name>ApexClass</name>
     </types>
     <types>
