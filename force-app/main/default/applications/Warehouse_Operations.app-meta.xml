@@ -22,5 +22,6 @@
     <tabs>Inventory_Transaction__c</tabs>
     <tabs>Warehouse__c</tabs>
     <tabs>Bin_Location__c</tabs>
+    <tabs>Warehouse_Automation_Log__c</tabs>
     <uiType>Lightning</uiType>
 </CustomApplication>
