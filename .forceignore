@@ -3,3 +3,5 @@
 **/.sf/**
 **/.sfdx/**
 **/.env*
+**/jsconfig.json
+**/.eslintrc.json
