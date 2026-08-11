@@ -1,10 +1,14 @@
 public with sharing class WarehouseAllocateOrderAction {
     public class Request {
+        public Request() {}
+
         @InvocableVariable(required=true label='Outbound Order Id' description='Outbound order to allocate from available warehouse inventory.')
         public Id orderId;
     }
 
     public class Response {
+        public Response() {}
+
         @InvocableVariable(label='Outbound Order Id')
         public Id orderId;
 

@@ -1,5 +1,7 @@
 public with sharing class WarehouseAutomationFaultAction {
     public class Request {
+        public Request() {}
+
         @InvocableVariable(required=true label='Flow Name')
         public String flowName;
 
