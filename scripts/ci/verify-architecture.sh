@@ -28,6 +28,29 @@ for file in "$CLASSES"/*Controller.cls; do
 done
 rm -f /tmp/warehouse-dml.$$ 2>/dev/null || true
 
+for file in "$CLASSES"/*.cls; do
+  [[ -e "$file" ]] || continue
+  name="$(basename "$file")"
+  case "$name" in
+    *Test.cls|*TestDataFactory.cls) continue ;;
+  esac
+  if ! grep -qE '^public with sharing class ' "$file"; then
+    echo "Runtime Apex class must declare with sharing: $name"
+    failed=1
+  fi
+done
+
+while IFS= read -r hit; do
+  [[ -z "$hit" ]] && continue
+  case "$hit" in
+    WarehouseAutomationFaultAction.cls:*) ;;
+    *)
+      echo "Unexpected SYSTEM_MODE usage: $hit"
+      failed=1
+      ;;
+  esac
+done < <(grep -Hn 'AccessLevel.SYSTEM_MODE' "$CLASSES"/*.cls 2>/dev/null | sed "s#${CLASSES}/##" || true)
+
 if [[ "$failed" -ne 0 ]]; then
   exit 1
 fi
