@@ -71,6 +71,33 @@ private class WarehousePostalServiceTest {
     }
 
     @IsTest
+    static void validatedDestinationAllowsShipmentRelease() {
+        Outbound_Order__c orderRecord = [SELECT Id FROM Outbound_Order__c LIMIT 1];
+        Warehouse__c warehouse = [SELECT Id FROM Warehouse__c LIMIT 1];
+        orderRecord.Status__c = 'Ready to Ship';
+        update orderRecord;
+        Package__c packageRecord = new Package__c(
+            Outbound_Order__c = orderRecord.Id,
+            Warehouse__c = warehouse.Id,
+            Status__c = 'Ready to Ship',
+            Weight__c = 3.25
+        );
+        insert packageRecord;
+        Test.setMock(HttpCalloutMock.class, new PostalMock(200, successBody()));
+
+        Test.startTest();
+        WarehousePostalService.validateOrderDestination(orderRecord.Id);
+        Shipment__c shipment = WarehouseShippingService.shipPackage(
+            packageRecord.Id, 'Demo Express', 'LIVE-POST-001', 'Destination validated before release.'
+        );
+        Test.stopTest();
+
+        System.assertNotEquals(null, shipment.Id);
+        System.assertEquals('Shipped', shipment.Status__c);
+        System.assertEquals(1, [SELECT COUNT() FROM Shipment__c WHERE Id = :shipment.Id]);
+    }
+
+    @IsTest
     static void missingPostalCodeReturnsUsefulErrorWithoutUpdatingOrder() {
         Outbound_Order__c orderRecord = [SELECT Id FROM Outbound_Order__c LIMIT 1];
         Test.setMock(HttpCalloutMock.class, new PostalMock(404, '{}'));

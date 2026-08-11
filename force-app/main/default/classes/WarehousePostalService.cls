@@ -68,6 +68,12 @@ public with sharing class WarehousePostalService {
         result.latitude = decimalValue(firstPlace.get('latitude'));
         result.longitude = decimalValue(firstPlace.get('longitude'));
         result.source = 'Zippopotam.us';
+        if (!String.isBlank(result.countryCode) && normalizeCountry(result.countryCode) != normalizedCountry) {
+            throw new PostalException('Postal validation service returned a different country than requested.');
+        }
+        if (String.isBlank(result.city)) {
+            throw new PostalException('Postal validation service returned no usable city information.');
+        }
         return result;
     }
 
