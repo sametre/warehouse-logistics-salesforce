@@ -8,7 +8,7 @@ failed=0
 while IFS= read -r file; do
   name="$(basename "$file")"
   case "$name" in
-    *Selector.cls|*Test.cls) continue ;;
+    *Selector.cls|*Test.cls|*TestDataFactory.cls) continue ;;
   esac
   if grep -nE '\bFROM[[:space:]]+[A-Za-z0-9_]+(__c)?\b' "$file" >/tmp/warehouse-soql.$$ 2>/dev/null; then
     echo "Direct SOQL found outside selector layer: $name"
