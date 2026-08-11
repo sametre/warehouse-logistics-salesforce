@@ -41,7 +41,9 @@ private class WarehouseOutboundFlowTest {
             Priority__c = 'High',
             Order_Date__c = Date.today(),
             Required_Ship_Date__c = Date.today().addDays(1),
-            External_Order_Reference__c = 'WEB-1001'
+            External_Order_Reference__c = 'WEB-1001',
+            Shipping_Country_Code__c = 'US',
+            Shipping_Postal_Code__c = '90210'
         );
         insert orderRecord;
 
@@ -115,6 +117,11 @@ private class WarehouseOutboundFlowTest {
         for (Pick_Task__c task : [SELECT Id, Quantity__c FROM Pick_Task__c]) {
             WarehousePickingService.completePick(task.Id, task.Quantity__c, null);
         }
+
+        orderRecord.Shipping_Address_Validated__c = true;
+        orderRecord.Shipping_Validated_Country_Code__c = 'US';
+        orderRecord.Shipping_Validated_Postal_Code__c = '90210';
+        update orderRecord;
 
         Test.startTest();
         Package__c packageRecord = WarehouseShippingService.packOrder(orderRecord.Id, 4.5, 'Packed in one carton.');
