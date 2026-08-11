@@ -97,7 +97,7 @@ insert customer;
 Outbound_Order__c outboundOrder = new Outbound_Order__c(
     Warehouse__c = warehouse.Id,
     Customer__c = customer.Id,
-    Status__c = 'Ready to Allocate',
+    Status__c = 'Draft',
     Priority__c = 'High',
     Order_Date__c = Date.today(),
     Required_Ship_Date__c = Date.today().addDays(1),
@@ -114,6 +114,10 @@ insert new Outbound_Order_Line__c(
     Packed_Quantity__c = 0,
     Status__c = 'Pending'
 );
+
+// Week 07 automation: entering Ready to Allocate invokes the record-triggered Flow.
+outboundOrder.Status__c = 'Ready to Allocate';
+update outboundOrder;
 
 System.debug('Outbound order: ' + outboundOrder.Id);
 System.debug('Picking bin: ' + pickingBin.Id);

@@ -37,7 +37,7 @@ private class WarehouseOutboundFlowTest {
         Outbound_Order__c orderRecord = new Outbound_Order__c(
             Warehouse__c = warehouse.Id,
             Customer__c = customer.Id,
-            Status__c = 'Ready to Allocate',
+            Status__c = 'Draft',
             Priority__c = 'High',
             Order_Date__c = Date.today(),
             Required_Ship_Date__c = Date.today().addDays(1),
