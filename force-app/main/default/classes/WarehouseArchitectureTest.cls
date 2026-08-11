@@ -103,4 +103,55 @@ private class WarehouseArchitectureTest {
         Warehouse__c stored = [SELECT Name FROM Warehouse__c WHERE Id = :warehouse.Id];
         System.assertEquals('Committed Architecture DC', stored.Name);
     }
+    @IsTest
+    static void bulkAllocationUsesBoundedQueryCount() {
+        Warehouse__c warehouse = [SELECT Id FROM Warehouse__c WHERE Code__c = 'ARCH-01' LIMIT 1];
+        Product2 product = [SELECT Id FROM Product2 WHERE ProductCode = 'ARCH-SKU-01' LIMIT 1];
+        Account customer = [SELECT Id FROM Account WHERE Name = 'Architecture Customer' LIMIT 1];
+        Outbound_Order__c firstOrder = [
+            SELECT Id FROM Outbound_Order__c WHERE External_Order_Reference__c = 'ARCH-ORDER-01' LIMIT 1
+        ];
+        insert new Outbound_Order_Line__c(
+            Outbound_Order__c = firstOrder.Id,
+            Product__c = product.Id,
+            Ordered_Quantity__c = 5,
+            Allocated_Quantity__c = 0,
+            Picked_Quantity__c = 0,
+            Packed_Quantity__c = 0,
+            Status__c = 'Pending'
+        );
+
+        Outbound_Order__c secondOrder = new Outbound_Order__c(
+            Warehouse__c = warehouse.Id,
+            Customer__c = customer.Id,
+            Status__c = 'Draft',
+            Priority__c = 'High',
+            Order_Date__c = Date.today(),
+            Required_Ship_Date__c = Date.today().addDays(1),
+            External_Order_Reference__c = 'ARCH-ORDER-02'
+        );
+        insert secondOrder;
+        insert new Outbound_Order_Line__c(
+            Outbound_Order__c = secondOrder.Id,
+            Product__c = product.Id,
+            Ordered_Quantity__c = 7,
+            Allocated_Quantity__c = 0,
+            Picked_Quantity__c = 0,
+            Packed_Quantity__c = 0,
+            Status__c = 'Pending'
+        );
+
+        Test.startTest();
+        Integer queriesBefore = Limits.getQueries();
+        Map<Id, WarehouseOutboundService.AllocationResult> results = WarehouseOutboundService.allocateOrders(
+            new Set<Id>{ firstOrder.Id, secondOrder.Id }
+        );
+        Integer queriesUsed = Limits.getQueries() - queriesBefore;
+        Test.stopTest();
+
+        System.assertEquals(2, results.size());
+        System.assert(queriesUsed <= 5, 'Bulk allocation should use a bounded selector query set, not queries per order.');
+        System.assertEquals(12, [SELECT SUM(Reserved__c) total FROM Inventory__c][0].get('total'));
+    }
+
 }
