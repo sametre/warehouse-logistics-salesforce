@@ -1,68 +1,10 @@
 @IsTest
 private class WarehouseAutomationActionTest {
-    private class Scenario {
-        Id warehouseId;
-        Id productId;
-        Id customerId;
-    }
-
-    private static Scenario createScenario() {
-        Warehouse__c warehouse = new Warehouse__c(
-            Name = 'Automation DC', Code__c = 'AUTO-01', City__c = 'Bursa', Is_Active__c = true
-        );
-        insert warehouse;
-
-        Bin_Location__c pickBin = new Bin_Location__c(
-            Name = 'Automation Pick', Warehouse__c = warehouse.Id, Bin_Code__c = 'AUTO-PICK-01',
-            Bin_Type__c = 'Picking', Capacity__c = 500, Is_Active__c = true
-        );
-        insert pickBin;
-
-        Product2 product = new Product2(Name = 'Automation Product', ProductCode = 'AUTO-SKU', IsActive = true);
-        insert product;
-        insert new Inventory__c(
-            Product__c = product.Id, Bin_Location__c = pickBin.Id,
-            On_Hand__c = 50, Reserved__c = 0, Reorder_Level__c = 5, Status__c = 'Available'
-        );
-
-        Account customer = new Account(Name = 'Automation Customer');
-        insert customer;
-
-        Scenario scenario = new Scenario();
-        scenario.warehouseId = warehouse.Id;
-        scenario.productId = product.Id;
-        scenario.customerId = customer.Id;
-        return scenario;
-    }
-
-    private static Outbound_Order__c createDraftOrder(Scenario scenario, String externalReference, Decimal quantity) {
-        Outbound_Order__c orderRecord = new Outbound_Order__c(
-            Warehouse__c = scenario.warehouseId,
-            Customer__c = scenario.customerId,
-            Status__c = 'Draft',
-            Priority__c = 'Normal',
-            Order_Date__c = Date.today(),
-            Required_Ship_Date__c = Date.today().addDays(1),
-            External_Order_Reference__c = externalReference
-        );
-        insert orderRecord;
-        insert new Outbound_Order_Line__c(
-            Outbound_Order__c = orderRecord.Id,
-            Product__c = scenario.productId,
-            Ordered_Quantity__c = quantity,
-            Allocated_Quantity__c = 0,
-            Picked_Quantity__c = 0,
-            Packed_Quantity__c = 0,
-            Status__c = 'Pending'
-        );
-        return orderRecord;
-    }
-
     @IsTest
     static void invocableActionHandlesMultipleOrdersInOneCall() {
-        Scenario scenario = createScenario();
-        Outbound_Order__c firstOrder = createDraftOrder(scenario, 'AUTO-1001', 12);
-        Outbound_Order__c secondOrder = createDraftOrder(scenario, 'AUTO-1002', 8);
+        WarehouseTestDataFactory.CoreScenario scenario = WarehouseTestDataFactory.createCoreScenario('AUTO', 50);
+        Outbound_Order__c firstOrder = WarehouseTestDataFactory.createOutboundOrder(scenario, 'AUTO-1001', 12);
+        Outbound_Order__c secondOrder = WarehouseTestDataFactory.createOutboundOrder(scenario, 'AUTO-1002', 8);
 
         WarehouseAllocateOrderAction.Request firstRequest = new WarehouseAllocateOrderAction.Request();
         firstRequest.orderId = firstOrder.Id;
@@ -78,14 +20,14 @@ private class WarehouseAutomationActionTest {
         System.assertEquals(2, responses.size());
         System.assertEquals('Allocated', responses[0].orderStatus);
         System.assertEquals('Allocated', responses[1].orderStatus);
-        System.assertEquals(20, [SELECT Reserved__c FROM Inventory__c WHERE Product__c = :scenario.productId LIMIT 1].Reserved__c);
+        System.assertEquals(20, [SELECT Reserved__c FROM Inventory__c WHERE Product__c = :scenario.product.Id LIMIT 1].Reserved__c);
         System.assertEquals(2, [SELECT COUNT() FROM Pick_Task__c]);
     }
 
     @IsTest
     static void recordTriggeredFlowAllocatesWhenOrderBecomesReady() {
-        Scenario scenario = createScenario();
-        Outbound_Order__c orderRecord = createDraftOrder(scenario, 'AUTO-FLOW-01', 10);
+        WarehouseTestDataFactory.CoreScenario scenario = WarehouseTestDataFactory.createCoreScenario('AUTO', 50);
+        Outbound_Order__c orderRecord = WarehouseTestDataFactory.createOutboundOrder(scenario, 'AUTO-FLOW-01', 10);
 
         Test.startTest();
         orderRecord.Status__c = 'Ready to Allocate';
@@ -99,8 +41,8 @@ private class WarehouseAutomationActionTest {
 
     @IsTest
     static void recordTriggeredFlowRoutesAllocationFailureToLog() {
-        Scenario scenario = createScenario();
-        Outbound_Order__c orderRecord = createDraftOrder(scenario, 'AUTO-FAIL-01', 80);
+        WarehouseTestDataFactory.CoreScenario scenario = WarehouseTestDataFactory.createCoreScenario('AUTO', 50);
+        Outbound_Order__c orderRecord = WarehouseTestDataFactory.createOutboundOrder(scenario, 'AUTO-FAIL-01', 80);
 
         Test.startTest();
         orderRecord.Status__c = 'Ready to Allocate';
