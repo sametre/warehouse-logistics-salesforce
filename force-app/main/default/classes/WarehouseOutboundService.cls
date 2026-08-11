@@ -26,7 +26,6 @@ public with sharing class WarehouseOutboundService {
             FROM Outbound_Order__c
             WHERE Id IN :orderIds
             WITH USER_MODE
-            ORDER BY CreatedDate, Id
             FOR UPDATE
         ];
         if (orders.size() != orderIds.size()) {
@@ -50,7 +49,6 @@ public with sharing class WarehouseOutboundService {
             FROM Outbound_Order_Line__c
             WHERE Outbound_Order__c IN :orderIds AND Status__c != 'Cancelled'
             WITH USER_MODE
-            ORDER BY CreatedDate, Id
             FOR UPDATE
         ];
 
@@ -82,7 +80,6 @@ public with sharing class WarehouseOutboundService {
               AND Status__c != 'Hold'
               AND Bin_Location__r.Bin_Type__c IN ('Picking', 'Storage')
             WITH USER_MODE
-            ORDER BY CreatedDate, Id
             FOR UPDATE
         ];
 
