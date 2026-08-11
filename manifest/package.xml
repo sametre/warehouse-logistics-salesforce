@@ -23,6 +23,9 @@
         <members>WarehouseTransactionManager</members>
         <members>WarehouseSecurityTest</members>
         <members>WarehouseTestDataFactory</members>
+        <members>WarehousePostalController</members>
+        <members>WarehousePostalService</members>
+        <members>WarehousePostalServiceTest</members>
         <name>ApexClass</name>
     </types>
     <types>
@@ -83,7 +86,16 @@
     </types>
     <types>
         <members>Warehouse_Week10</members>
+        <members>Warehouse_Week11</members>
         <name>ApexTestSuite</name>
+    </types>
+    <types>
+        <members>Warehouse_Postal_API</members>
+        <name>NamedCredential</name>
+    </types>
+    <types>
+        <members>Warehouse_Postal_External</members>
+        <name>ExternalCredential</name>
     </types>
     <version>67.0</version>
 </Package>

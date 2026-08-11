@@ -60,7 +60,7 @@ for path in (DEFAULT / 'permissionsets').glob('*.permissionset-meta.xml'):
         for n in root.findall('m:externalCredentialPrincipalAccesses', NS)
         if n.findtext('m:enabled', namespaces=NS) == 'true'
     }
-    if path.stem.replace('.permissionset', '') in allowed:
+    if path.name.replace('.permissionset-meta.xml', '') in allowed:
         if principal not in granted:
             errors.append(f'{path.name} must grant the postal external credential principal.')
     elif principal in granted:
