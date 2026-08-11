@@ -34,3 +34,19 @@ The current build also covers order allocation, inventory reservation, pick task
 
 When an outbound order moves to **Ready to Allocate**, the active record-triggered Flow `Outbound_Order_Auto_Allocation` calls a bulk-safe invocable Apex action. Apex owns inventory locking, reservation, and pick-task creation; Flow owns orchestration and routes failures to `Warehouse_Automation_Log__c` for manager review.
 
+## Week 10 quality gate
+
+Run the local checks before every push:
+
+```bash
+./scripts/ci/run-local-gate.sh
+```
+
+With an authenticated development org, run Code Analyzer, a dry-run deploy, and the Week 10 Apex test suite:
+
+```bash
+./scripts/ci/run-salesforce-gate.sh warehouse-dev
+```
+
+GitHub Actions runs the same static gate on pull requests. Org-side tests run only when the repository secret `SF_AUTH_URL` is configured; the authorization URL must never be committed to the repository.
+

@@ -20,9 +20,10 @@ sf code-analyzer run \
   --severity-threshold 3 \
   --output-file reports/code-analyzer.json
 
-sf project deploy validate \
+sf project deploy start \
   --source-dir force-app \
   --target-org "$TARGET_ORG" \
+  --dry-run \
   --test-level RunLocalTests \
   --wait 30
 

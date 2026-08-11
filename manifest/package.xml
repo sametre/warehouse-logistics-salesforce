@@ -21,6 +21,8 @@
         <members>WarehouseReceivingService</members>
         <members>WarehouseShippingService</members>
         <members>WarehouseTransactionManager</members>
+        <members>WarehouseSecurityTest</members>
+        <members>WarehouseTestDataFactory</members>
         <name>ApexClass</name>
     </types>
     <types>
@@ -78,6 +80,10 @@
         <members>warehouseOutboundWorkspace</members>
         <members>warehouseReceivingWorkspace</members>
         <name>LightningComponentBundle</name>
+    </types>
+    <types>
+        <members>Warehouse_Week10</members>
+        <name>ApexTestSuite</name>
     </types>
     <version>67.0</version>
 </Package>

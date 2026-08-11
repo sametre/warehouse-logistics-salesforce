@@ -1,0 +1,110 @@
+name: Salesforce Quality Gate
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  static-quality:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Run repository quality gate
+        run: ./scripts/ci/run-local-gate.sh
+
+      - name: Install Salesforce CLI
+        run: npm install --global @salesforce/cli
+
+      - name: Run Salesforce Code Analyzer
+        run: |
+          mkdir -p reports
+          sf code-analyzer run \
+            --workspace force-app \
+            --rule-selector Recommended \
+            --severity-threshold 3 \
+            --output-file reports/code-analyzer.json
+
+      - name: Upload analyzer report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: code-analyzer-report
+          path: reports/code-analyzer.json
+          if-no-files-found: ignore
+
+  org-tests:
+    needs: static-quality
+    runs-on: ubuntu-latest
+    env:
+      SF_AUTH_URL: ${{ secrets.SF_AUTH_URL }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Skip when no classroom org secret is configured
+        if: env.SF_AUTH_URL == ''
+        run: echo "SF_AUTH_URL is not configured; org-side deploy and Apex tests are skipped."
+
+      - name: Set up Node
+        if: env.SF_AUTH_URL != ''
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install Salesforce CLI
+        if: env.SF_AUTH_URL != ''
+        run: npm install --global @salesforce/cli
+
+      - name: Authenticate classroom org
+        if: env.SF_AUTH_URL != ''
+        run: printf '%s' "$SF_AUTH_URL" | sf org login sfdx-url --sfdx-url-stdin --alias warehouse-ci
+
+      - name: Dry-run deployment with local tests
+        if: env.SF_AUTH_URL != ''
+        run: |
+          mkdir -p reports/deploy
+          sf project deploy start \
+            --source-dir force-app \
+            --target-org warehouse-ci \
+            --dry-run \
+            --test-level RunLocalTests \
+            --wait 30 \
+            --junit \
+            --results-dir reports/deploy
+
+      - name: Run Week 10 Apex suite with coverage
+        if: env.SF_AUTH_URL != ''
+        run: |
+          mkdir -p reports/apex
+          sf apex run test \
+            --target-org warehouse-ci \
+            --suite-names Warehouse_Week10 \
+            --code-coverage \
+            --detailed-coverage \
+            --result-format junit \
+            --output-dir reports/apex \
+            --wait 30
+
+      - name: Upload org test reports
+        if: always() && env.SF_AUTH_URL != ''
+        uses: actions/upload-artifact@v4
+        with:
+          name: salesforce-org-test-reports
+          path: reports/
+          if-no-files-found: ignore
