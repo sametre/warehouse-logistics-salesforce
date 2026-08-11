@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Shipping_Country_Code_Format</fullName>
+    <active>true</active>
+    <errorConditionFormula>AND(NOT(ISBLANK(Shipping_Country_Code__c)), LEN(TRIM(Shipping_Country_Code__c)) != 2)</errorConditionFormula>
+    <errorMessage>Shipping country code must use the two-letter ISO format, for example TR or US.</errorMessage>
+</ValidationRule>
